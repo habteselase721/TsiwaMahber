@@ -1,8 +1,11 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:csv/csv.dart';
+import 'package:excel/excel.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:tsiwa_mahber/core/constants/firestore_paths.dart';
@@ -79,13 +82,18 @@ class CsvService {
   Future<String> exportMembers(String areaId, String tsiwaId) async {
     final snapshot = await _firestore
         .collection(FirestorePaths.members(areaId, tsiwaId))
-        .where('deletedAt', isNull: true)
-        .orderBy('orderIndex')
         .get();
 
+    final docs = snapshot.docs.where((doc) {
+      final data = doc.data();
+      return data['deletedAt'] == null;
+    }).toList();
+
+    final members = docs.map((doc) => Member.fromDoc(doc)).toList()
+      ..sort((a, b) => a.orderIndex.compareTo(b.orderIndex));
+
     final rows = <List<String>>[memberHeaders];
-    for (final doc in snapshot.docs) {
-      final m = Member.fromDoc(doc);
+    for (final m in members) {
       rows.add([
         m.fullName,
         m.christianName,
@@ -145,9 +153,7 @@ class CsvService {
 
   // ── Import ──
 
-  Future<List<Member>> parseMembersCsv(String csvContent) async {
-    final rows = const CsvToListConverter(shouldParseNumbers: false)
-        .convert(_sanitizeCsv(csvContent));
+  List<Member> parseMembersFromRows(List<List<dynamic>> rows) {
     if (rows.length < 2) return [];
 
     final members = <Member>[];
@@ -161,8 +167,8 @@ class CsvService {
       members.add(Member(
         fullName: row[0].toString().trim(),
         christianName: row[1].toString().trim(),
-        phone: row[2].toString().trim(),
-        phone2: row.length > 3 ? row[3].toString().trim() : '',
+        phone: _normalizePhone(row[2].toString().trim()),
+        phone2: row.length > 3 ? _normalizePhone(row[3].toString().trim()) : '',
         idNumber: row.length > 4 ? row[4].toString().trim() : '',
         address: row.length > 5 ? row[5].toString().trim() : '',
         role: _parseMemberRole(roleName),
@@ -173,9 +179,15 @@ class CsvService {
     return members;
   }
 
-  Future<List<Leader>> parseLeadersCsv(String csvContent) async {
-    final rows = const CsvToListConverter(shouldParseNumbers: false)
-        .convert(_sanitizeCsv(csvContent));
+  Future<List<Member>> parseMembersCsv(String csvContent) async {
+    final rows = const CsvToListConverter(
+      shouldParseNumbers: false,
+      eol: '\n',
+    ).convert(_sanitizeCsv(csvContent));
+    return parseMembersFromRows(rows);
+  }
+
+  List<Leader> parseLeadersFromRows(List<List<dynamic>> rows) {
     if (rows.length < 2) return [];
 
     final leaders = <Leader>[];
@@ -184,14 +196,13 @@ class CsvService {
       if (row.length < 3) continue;
 
       final roleName = row.length > 4 ? row[4].toString().trim() : '';
-
       final edirRoleName = row.length > 5 ? row[5].toString().trim() : '';
 
       leaders.add(Leader(
         fullName: row[0].toString().trim(),
         christianName: row[1].toString().trim(),
-        phone: row[2].toString().trim(),
-        phone2: row.length > 3 ? row[3].toString().trim() : '',
+        phone: _normalizePhone(row[2].toString().trim()),
+        phone2: row.length > 3 ? _normalizePhone(row[3].toString().trim()) : '',
         role: _parseLeaderRole(roleName),
         edirRole: _parseEdirLeaderRole(edirRoleName),
       ));
@@ -200,9 +211,15 @@ class CsvService {
     return leaders;
   }
 
-  Future<List<EdirMember>> parseEdirMembersCsv(String csvContent) async {
-    final rows = const CsvToListConverter(shouldParseNumbers: false)
-        .convert(_sanitizeCsv(csvContent));
+  Future<List<Leader>> parseLeadersCsv(String csvContent) async {
+    final rows = const CsvToListConverter(
+      shouldParseNumbers: false,
+      eol: '\n',
+    ).convert(_sanitizeCsv(csvContent));
+    return parseLeadersFromRows(rows);
+  }
+
+  List<EdirMember> parseEdirMembersFromRows(List<List<dynamic>> rows) {
     if (rows.length < 2) return [];
 
     final members = <EdirMember>[];
@@ -215,12 +232,20 @@ class CsvService {
       members.add(EdirMember(
         fullName: row[0].toString().trim(),
         christianName: row[1].toString().trim(),
-        phone: row[2].toString().trim(),
+        phone: _normalizePhone(row[2].toString().trim()),
         status: _parseEdirMemberStatus(statusName),
       ));
     }
 
     return members;
+  }
+
+  Future<List<EdirMember>> parseEdirMembersCsv(String csvContent) async {
+    final rows = const CsvToListConverter(
+      shouldParseNumbers: false,
+      eol: '\n',
+    ).convert(_sanitizeCsv(csvContent));
+    return parseEdirMembersFromRows(rows);
   }
 
   // ── Batch write ──
@@ -260,8 +285,8 @@ class CsvService {
     }
     await batch.commit();
 
-    // Auto-create login accounts
-    await _createUserAccounts(importedMembers, areaId);
+    // Auto-create login accounts and link to tsiwa
+    await _createUserAccounts(importedMembers, areaId, tsiwaId: tsiwaId);
 
     await _updateTswaCounts(areaId, tsiwaId);
     return imported;
@@ -329,19 +354,21 @@ class CsvService {
     }
     await batch.commit();
 
-    // Auto-create login accounts
-    await _createUserAccounts(importedEdirMembers, areaId);
+    // Auto-create login accounts and link to edir
+    await _createUserAccounts(importedEdirMembers, areaId, edirId: edirId);
 
     await _updateEdirMemberCount(areaId, edirId);
     return imported;
   }
 
   /// Creates login accounts in the `users` collection for imported members.
-  /// Skips members whose phone already exists.
+  /// Links them to the given tsiwa/edir. Updates existing users if phone matches.
   Future<void> _createUserAccounts(
     List<dynamic> entries,
-    String areaId,
-  ) async {
+    String areaId, {
+    String? tsiwaId,
+    String? edirId,
+  }) async {
     final usersCol = _firestore.collection('users');
 
     for (final entry in entries) {
@@ -360,12 +387,36 @@ class CsvService {
 
       if (name.isEmpty || phone.isEmpty) continue;
 
-      // Skip if phone already registered
       final existing = await usersCol
           .where('phone', isEqualTo: phone)
           .limit(1)
           .get();
-      if (existing.docs.isNotEmpty) continue;
+
+      if (existing.docs.isNotEmpty) {
+        // User exists — add tsiwa/edir assignment if missing
+        final doc = existing.docs.first;
+        final updates = <String, dynamic>{};
+        if (tsiwaId != null) {
+          final ids = List<String>.from(
+              doc.data()['assignedTsiwaIds'] as List<dynamic>? ?? []);
+          if (!ids.contains(tsiwaId)) {
+            ids.add(tsiwaId);
+            updates['assignedTsiwaIds'] = ids;
+          }
+        }
+        if (edirId != null) {
+          final ids = List<String>.from(
+              doc.data()['assignedEdirIds'] as List<dynamic>? ?? []);
+          if (!ids.contains(edirId)) {
+            ids.add(edirId);
+            updates['assignedEdirIds'] = ids;
+          }
+        }
+        if (updates.isNotEmpty) {
+          await doc.reference.update(updates);
+        }
+        continue;
+      }
 
       // Default access code = last 4 digits of phone
       final code = phone.length >= 4
@@ -378,6 +429,8 @@ class CsvService {
         passwordCode: code,
         areaId: areaId,
         role: UserRole.member,
+        assignedTsiwaIds: tsiwaId != null ? [tsiwaId] : [],
+        assignedEdirIds: edirId != null ? [edirId] : [],
       );
 
       await usersCol.add(user.toCreateMap());
@@ -409,21 +462,115 @@ class CsvService {
     await Share.shareXFiles([XFile(file.path)]);
   }
 
-  Future<String?> pickCsvFile() async {
+  /// Picks a CSV or XLSX file and returns parsed rows as a list of string lists.
+  /// Returns null if user cancels.
+  Future<List<List<String>>?> pickAndParseFile() async {
     final result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
-      allowedExtensions: ['csv'],
+      allowedExtensions: ['csv', 'xlsx'],
+      withData: true,
     );
 
     if (result == null || result.files.isEmpty) return null;
 
-    final path = result.files.single.path;
+    final file = result.files.single;
+    final extension = file.extension?.toLowerCase() ?? '';
+
+    if (extension == 'xlsx') {
+      return _parseXlsxFile(file);
+    } else {
+      return _parseCsvFile(file);
+    }
+  }
+
+  Future<List<List<String>>> _parseCsvFile(PlatformFile file) async {
+    String content;
+
+    final bytes = file.bytes;
+    if (bytes != null && bytes.isNotEmpty) {
+      content = utf8.decode(bytes, allowMalformed: true);
+    } else if (!kIsWeb && file.path != null) {
+      content = await File(file.path!).readAsString();
+    } else {
+      throw Exception('Failed to read file');
+    }
+
+    final sanitized = _sanitizeCsv(content);
+    final rows = const CsvToListConverter(
+      shouldParseNumbers: false,
+      eol: '\n',
+    ).convert(sanitized);
+
+    return rows.map((row) => row.map((e) => e.toString()).toList()).toList();
+  }
+
+  Future<List<List<String>>> _parseXlsxFile(PlatformFile file) async {
+    Uint8List bytes;
+
+    if (file.bytes != null && file.bytes!.isNotEmpty) {
+      bytes = file.bytes!;
+    } else if (!kIsWeb && file.path != null) {
+      bytes = await File(file.path!).readAsBytes();
+    } else {
+      throw Exception('Failed to read file');
+    }
+
+    final excel = Excel.decodeBytes(bytes);
+    final rows = <List<String>>[];
+
+    if (excel.tables.isEmpty) return rows;
+    final sheetName = excel.tables.keys.first;
+    final sheet = excel.tables[sheetName];
+    if (sheet == null) return rows;
+
+    for (final row in sheet.rows) {
+      final values = row.map<String>((cell) {
+        if (cell == null || cell.value == null) return '';
+        final v = cell.value;
+        if (v is IntCellValue) return v.value.toString();
+        if (v is DoubleCellValue) return v.value.toInt().toString();
+        if (v is TextCellValue) return v.value.toString();
+        return v.toString();
+      }).toList();
+
+      if (values.every((v) => v.trim().isEmpty)) continue;
+      rows.add(values);
+    }
+
+    return rows;
+  }
+
+  @Deprecated('Use pickAndParseFile() instead')
+  Future<String?> pickCsvFile() async {
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['csv'],
+      withData: true,
+    );
+
+    if (result == null || result.files.isEmpty) return null;
+
+    final file = result.files.single;
+    final bytes = file.bytes;
+    if (bytes != null && bytes.isNotEmpty) {
+      return utf8.decode(bytes, allowMalformed: true);
+    }
+
+    final path = file.path;
     if (path == null) return null;
 
     return File(path).readAsString();
   }
 
   // ── Helpers ──
+
+  static String _normalizePhone(String phone) {
+    if (phone.isEmpty) return phone;
+    if (!phone.startsWith('0') && !phone.startsWith('+')) {
+      return '0$phone';
+    }
+    return phone;
+  }
 
   MemberRole _parseMemberRole(String displayName) {
     for (final role in MemberRole.values) {
@@ -458,16 +605,17 @@ class CsvService {
     try {
       final snapshot = await _firestore
           .collection(FirestorePaths.members(areaId, tsiwaId))
-          .where('deletedAt', isNull: true)
-          .where('isActive', isEqualTo: true)
           .get();
 
       int memberCount = 0;
       int museCount = 0;
 
       for (final doc in snapshot.docs) {
+        final data = doc.data();
+        if (data['deletedAt'] != null) continue;
+        if (data['isActive'] != true) continue;
         memberCount++;
-        final role = doc.data()['role'] as String?;
+        final role = data['role'] as String?;
         if (role == 'muse' || role == 'assistant_muse') {
           museCount++;
         }

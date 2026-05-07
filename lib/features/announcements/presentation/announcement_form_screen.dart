@@ -6,7 +6,10 @@ import 'package:tsiwa_mahber/features/auth/domain/app_user.dart';
 import 'package:tsiwa_mahber/features/notifications/data/notification_repository.dart';
 import 'package:tsiwa_mahber/features/notifications/data/telegram_service.dart';
 import 'package:tsiwa_mahber/features/notifications/domain/app_notification.dart';
+import 'package:tsiwa_mahber/features/tsiwa/data/tsiwa_repository.dart';
+import 'package:tsiwa_mahber/features/tsiwa/domain/tsiwa_mahber.dart';
 import 'package:tsiwa_mahber/core/l10n/app_strings.dart';
+import 'package:tsiwa_mahber/core/theme/app_theme.dart';
 
 class AnnouncementFormScreen extends StatefulWidget {
   final String areaId;
@@ -31,13 +34,45 @@ class _AnnouncementFormScreenState
   final _repository = AnnouncementRepository();
   final _notificationRepository = NotificationRepository();
   final _telegramService = TelegramService();
+  final _tsiwaRepository = TsiwaRepository();
 
   late final TextEditingController _titleController;
   late final TextEditingController _bodyController;
   late AnnouncementPriority _priority;
+  AnnouncementTarget _targetType = AnnouncementTarget.all;
+  String _selectedTsiwaId = '';
+  String _selectedTsiwaName = '';
   bool _isSaving = false;
+  List<TsiwaMahber> _tsiwas = [];
+  DateTime? _scheduledAt;
 
   bool get _isEditing => widget.announcement != null;
+
+  bool get _isDev {
+    return widget.currentUser?.role == UserRole.developer;
+  }
+
+  bool get _isAmerar {
+    final role = widget.currentUser?.role;
+    return role == UserRole.developer ||
+        role == UserRole.admin ||
+        role == UserRole.leader;
+  }
+
+  bool get _isMuse {
+    final user = widget.currentUser;
+    if (user == null) return false;
+    return user.tsiwaRoles.values.any((r) => r == 'muse');
+  }
+
+  List<String> get _museTsiwaIds {
+    final user = widget.currentUser;
+    if (user == null) return [];
+    return user.tsiwaRoles.entries
+        .where((e) => e.value == 'muse')
+        .map((e) => e.key)
+        .toList();
+  }
 
   @override
   void initState() {
@@ -48,6 +83,28 @@ class _AnnouncementFormScreenState
         text: widget.announcement?.body ?? '');
     _priority = widget.announcement?.priority ??
         AnnouncementPriority.normal;
+    if (widget.announcement != null) {
+      _targetType = widget.announcement!.targetType;
+      _selectedTsiwaId = widget.announcement!.targetId;
+      _selectedTsiwaName = widget.announcement!.targetName;
+    }
+
+    if (!_isAmerar && _isMuse) {
+      _targetType = AnnouncementTarget.tsiwa;
+      if (_museTsiwaIds.length == 1) {
+        _selectedTsiwaId = _museTsiwaIds.first;
+      }
+    }
+
+    _loadTsiwas();
+  }
+
+  Future<void> _loadTsiwas() async {
+    final stream =
+        _tsiwaRepository.watchTsiwas(widget.areaId);
+    stream.first.then((list) {
+      if (mounted) setState(() => _tsiwas = list);
+    });
   }
 
   @override
@@ -115,6 +172,14 @@ class _AnnouncementFormScreenState
                 }
               },
             ),
+            if (!_isEditing) ...[
+              const SizedBox(height: 16),
+              _buildTargetSelector(),
+            ],
+            if (_isDev) ...[
+              const SizedBox(height: 16),
+              _buildSchedulePicker(),
+            ],
             const SizedBox(height: 24),
             FilledButton(
               onPressed: _isSaving ? null : _save,
@@ -133,6 +198,154 @@ class _AnnouncementFormScreenState
     );
   }
 
+  Widget _buildTargetSelector() {
+    final canPostAll = _isAmerar;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(S.postTo,
+            style: const TextStyle(
+                fontSize: 14, fontWeight: FontWeight.w500)),
+        const SizedBox(height: 8),
+        RadioGroup<AnnouncementTarget>(
+          groupValue: _targetType,
+          onChanged: (v) {
+            if (v != null) setState(() => _targetType = v);
+          },
+          child: Column(
+            children: [
+              if (canPostAll)
+                RadioListTile<AnnouncementTarget>(
+                  title: Text(S.allMembers),
+                  value: AnnouncementTarget.all,
+                  dense: true,
+                ),
+              RadioListTile<AnnouncementTarget>(
+                title: Text(S.specificTsiwa),
+                value: AnnouncementTarget.tsiwa,
+                dense: true,
+              ),
+            ],
+          ),
+        ),
+        if (_targetType == AnnouncementTarget.tsiwa) ...[
+          const SizedBox(height: 8),
+          DropdownButtonFormField<String>(
+            initialValue: _selectedTsiwaId.isEmpty
+                ? null
+                : _selectedTsiwaId,
+            decoration: InputDecoration(
+              labelText: S.selectTsiwa,
+            ),
+            items: _availableTsiwas().map((t) {
+              return DropdownMenuItem(
+                value: t.id,
+                child: Text(t.name),
+              );
+            }).toList(),
+            validator: (v) {
+              if (_targetType == AnnouncementTarget.tsiwa &&
+                  (v == null || v.isEmpty)) {
+                return S.selectTsiwa;
+              }
+              return null;
+            },
+            onChanged: (v) {
+              if (v != null) {
+                final tsiwa = _tsiwas
+                    .where((t) => t.id == v)
+                    .firstOrNull;
+                setState(() {
+                  _selectedTsiwaId = v;
+                  _selectedTsiwaName = tsiwa?.name ?? '';
+                });
+              }
+            },
+          ),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildSchedulePicker() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            const Icon(Icons.schedule, size: 18),
+            const SizedBox(width: 8),
+            Text(S.scheduleAnnouncement,
+                style: const TextStyle(
+                    fontSize: 14, fontWeight: FontWeight.w500)),
+          ],
+        ),
+        const SizedBox(height: 8),
+        ListTile(
+          contentPadding: EdgeInsets.zero,
+          title: Text(
+            _scheduledAt != null
+                ? '${_scheduledAt!.day}/${_scheduledAt!.month}/${_scheduledAt!.year} '
+                    '${_scheduledAt!.hour}:${_scheduledAt!.minute.toString().padLeft(2, '0')}'
+                : S.noSchedule,
+            style: TextStyle(
+              color: _scheduledAt != null
+                  ? AppTheme.primary
+                  : AppTheme.textMuted,
+            ),
+          ),
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              IconButton(
+                icon: const Icon(Icons.calendar_today, size: 20),
+                onPressed: _pickSchedule,
+              ),
+              if (_scheduledAt != null)
+                IconButton(
+                  icon: const Icon(Icons.clear, size: 20),
+                  onPressed: () =>
+                      setState(() => _scheduledAt = null),
+                ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Future<void> _pickSchedule() async {
+    final date = await showDatePicker(
+      context: context,
+      initialDate: _scheduledAt ?? DateTime.now().add(const Duration(hours: 1)),
+      firstDate: DateTime.now(),
+      lastDate: DateTime.now().add(const Duration(days: 365)),
+    );
+    if (date == null || !mounted) return;
+    final time = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.fromDateTime(
+          _scheduledAt ?? DateTime.now().add(const Duration(hours: 1))),
+    );
+    if (time == null) return;
+    setState(() {
+      _scheduledAt = DateTime(
+        date.year,
+        date.month,
+        date.day,
+        time.hour,
+        time.minute,
+      );
+    });
+  }
+
+  List<TsiwaMahber> _availableTsiwas() {
+    if (_isAmerar) return _tsiwas;
+    final museIds = _museTsiwaIds;
+    return _tsiwas.where((t) => museIds.contains(t.id)).toList();
+  }
+
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -146,7 +359,17 @@ class _AnnouncementFormScreenState
         priority: _priority,
         authorId: widget.currentUser?.uid ?? '',
         authorName: widget.currentUser?.displayName ?? '',
-        isActive: widget.announcement?.isActive ?? true,
+        targetType: _targetType,
+        targetId: _targetType == AnnouncementTarget.tsiwa
+            ? _selectedTsiwaId
+            : '',
+        targetName: _targetType == AnnouncementTarget.tsiwa
+            ? _selectedTsiwaName
+            : '',
+        isActive: _scheduledAt == null
+            ? (widget.announcement?.isActive ?? true)
+            : false,
+        scheduledAt: _scheduledAt,
       );
 
       if (_isEditing) {
@@ -156,9 +379,8 @@ class _AnnouncementFormScreenState
         await _repository.createAnnouncement(
             widget.areaId, announcement);
 
-        // Send in-app notifications to all users
         final notification = AppNotification(
-          title: 'አዲስ ማስታወቂያ: ${announcement.title}',
+          title: 'አዲስ ማሳሰቢያ / መልእክት: ${announcement.title}',
           body: announcement.body.length > 100
               ? '${announcement.body.substring(0, 100)}...'
               : announcement.body,
@@ -167,12 +389,19 @@ class _AnnouncementFormScreenState
           senderName: widget.currentUser?.displayName,
         );
 
-        _notificationRepository.sendNotificationToAll(
-          areaId: widget.areaId,
-          notification: notification,
-        );
+        if (_targetType == AnnouncementTarget.tsiwa &&
+            _selectedTsiwaId.isNotEmpty) {
+          _notificationRepository.sendNotificationToTsiwaMembers(
+            tsiwaId: _selectedTsiwaId,
+            notification: notification,
+          );
+        } else {
+          _notificationRepository.sendNotificationToAll(
+            areaId: widget.areaId,
+            notification: notification,
+          );
+        }
 
-        // Send to Telegram if configured
         _telegramService.sendAnnouncement(
           areaId: widget.areaId,
           title: announcement.title,

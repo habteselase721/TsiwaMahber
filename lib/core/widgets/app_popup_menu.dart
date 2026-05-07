@@ -6,6 +6,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:tsiwa_mahber/core/theme/app_theme.dart';
 import 'package:tsiwa_mahber/features/developer/data/developer_service.dart';
 import 'package:tsiwa_mahber/core/l10n/app_strings.dart';
+import 'package:tsiwa_mahber/features/settings/presentation/about_screen.dart';
 
 class AppPopupMenu extends StatelessWidget {
   final ThemeProvider themeProvider;
@@ -41,15 +42,8 @@ class AppPopupMenu extends StatelessWidget {
         PopupMenuItem<String>(
           value: 'theme',
           child: ListTile(
-            leading: Icon(
-              themeProvider.isDarkMode
-                  ? Icons.light_mode
-                  : Icons.dark_mode,
-              size: 20,
-            ),
-            title: Text(
-              themeProvider.isDarkMode ? S.lightTheme : S.darkTheme,
-            ),
+            leading: const Icon(Icons.palette, size: 20),
+            title: Text(S.chooseTheme),
             contentPadding: EdgeInsets.zero,
             dense: true,
           ),
@@ -76,6 +70,15 @@ class AppPopupMenu extends StatelessWidget {
               dense: true,
             ),
           ),
+        PopupMenuItem<String>(
+          value: 'about',
+          child: ListTile(
+            leading: const Icon(Icons.info_outline, size: 20),
+            title: Text(S.about),
+            contentPadding: EdgeInsets.zero,
+            dense: true,
+          ),
+        ),
         const PopupMenuDivider(),
         PopupMenuItem<String>(
           value: 'exit',
@@ -104,7 +107,7 @@ class AppPopupMenu extends StatelessWidget {
         }
         break;
       case 'theme':
-        themeProvider.toggleTheme();
+        if (context.mounted) _showThemeChooser(context);
         break;
       case 'dev_login':
         _handleDevLogin(context);
@@ -117,9 +120,84 @@ class AppPopupMenu extends StatelessWidget {
           await FirebaseAuth.instance.signOut();
         }
         break;
+      case 'about':
+        if (context.mounted) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (_) => const AboutScreen()),
+          );
+        }
+        break;
       case 'exit':
         exit(0);
     }
+  }
+
+  void _showThemeChooser(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        final allModes = AppThemeMode.values;
+        return SimpleDialog(
+          title: Text(S.chooseTheme),
+          children: allModes.map((mode) {
+            final isSelected = themeProvider.mode == mode;
+            String label;
+            Color swatch;
+            switch (mode) {
+              case AppThemeMode.dark:
+                label = S.darkTheme;
+                swatch = AppTheme.primary;
+              case AppThemeMode.light:
+                label = S.lightTheme;
+                swatch = AppTheme.primary;
+              default:
+                final config = AppTheme.premiumThemes[mode];
+                if (config == null) return const SizedBox.shrink();
+                label = LocaleProvider.instance.isAmharic
+                    ? config.nameAm
+                    : config.name;
+                swatch = config.primary;
+            }
+            return SimpleDialogOption(
+              onPressed: () {
+                themeProvider.setTheme(mode);
+                Navigator.pop(ctx);
+              },
+              child: Row(
+                children: [
+                  Container(
+                    width: 24,
+                    height: 24,
+                    decoration: BoxDecoration(
+                      color: swatch,
+                      shape: BoxShape.circle,
+                      border: isSelected
+                          ? Border.all(color: Colors.white, width: 2)
+                          : null,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      label,
+                      style: TextStyle(
+                        fontWeight: isSelected
+                            ? FontWeight.bold
+                            : FontWeight.normal,
+                      ),
+                    ),
+                  ),
+                  if (isSelected)
+                    const Icon(Icons.check, size: 18),
+                ],
+              ),
+            );
+          }).toList(),
+        );
+      },
+    );
   }
 
   Future<void> _handleDevLogin(BuildContext context) async {

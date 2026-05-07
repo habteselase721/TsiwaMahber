@@ -45,12 +45,14 @@ class NotificationRepository {
     final usersSnapshot = await _firestore
         .collection('users')
         .where('areaId', isEqualTo: areaId)
-        .where('isActive', isEqualTo: true)
         .get();
+
+    final activeUsers = usersSnapshot.docs
+        .where((doc) => doc.data()['isActive'] == true);
 
     final batch = _firestore.batch();
 
-    for (final userDoc in usersSnapshot.docs) {
+    for (final userDoc in activeUsers) {
       final ref = _firestore
           .collection(_userNotificationsPath(userDoc.id))
           .doc();
@@ -58,6 +60,46 @@ class NotificationRepository {
     }
 
     await batch.commit();
+  }
+
+  Future<void> sendNotificationToTsiwaMembers({
+    required String tsiwaId,
+    required AppNotification notification,
+  }) async {
+    final usersSnapshot = await _firestore
+        .collection('users')
+        .where('assignedTsiwaIds', arrayContains: tsiwaId)
+        .get();
+
+    final activeDocs = usersSnapshot.docs
+        .where((doc) => doc.data()['isActive'] == true)
+        .toList();
+
+    for (int i = 0; i < activeDocs.length; i += 500) {
+      final chunk = activeDocs.sublist(
+        i,
+        i + 500 > activeDocs.length
+            ? activeDocs.length
+            : i + 500,
+      );
+      final batch = _firestore.batch();
+      for (final userDoc in chunk) {
+        final ref = _firestore
+            .collection(_userNotificationsPath(userDoc.id))
+            .doc();
+        batch.set(ref, notification.toCreateMap());
+      }
+      await batch.commit();
+    }
+  }
+
+  Future<void> sendNotificationToUser({
+    required String userId,
+    required AppNotification notification,
+  }) async {
+    await _firestore
+        .collection(_userNotificationsPath(userId))
+        .add(notification.toCreateMap());
   }
 
   Future<void> markAsRead(String userId, String notificationId) async {

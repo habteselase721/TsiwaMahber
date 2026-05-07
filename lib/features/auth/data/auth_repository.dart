@@ -21,11 +21,21 @@ class AuthRepository {
   // ── Member (phone+code) auth ──
 
   Future<AppUser> signInWithPhone(String phone, String code) async {
-    final query = await _firestore
+    // Search primary phone
+    var query = await _firestore
         .collection('users')
         .where('phone', isEqualTo: phone)
         .limit(1)
         .get();
+
+    // If not found, search secondary phone (phone2)
+    if (query.docs.isEmpty) {
+      query = await _firestore
+          .collection('users')
+          .where('phone2', isEqualTo: phone)
+          .limit(1)
+          .get();
+    }
 
     if (query.docs.isEmpty) {
       throw S.phoneNotRegistered;
@@ -82,7 +92,9 @@ class AuthRepository {
 
   Future<String?> createMemberAccount({
     required String displayName,
+    String christianName = '',
     required String phone,
+    String phone2 = '',
     required String passwordCode,
     required String areaId,
     UserRole role = UserRole.member,
@@ -103,7 +115,9 @@ class AuthRepository {
 
     final user = AppUser(
       displayName: displayName,
+      christianName: christianName,
       phone: phone,
+      phone2: phone2,
       passwordCode: passwordCode,
       role: role,
       areaId: areaId,
@@ -189,11 +203,15 @@ class AuthRepository {
   Future<void> updateProfile({
     required String uid,
     required String displayName,
+    String christianName = '',
     required String phone,
+    String phone2 = '',
   }) async {
     await _firestore.collection('users').doc(uid).update({
       'displayName': displayName,
+      'christianName': christianName,
       'phone': phone,
+      'phone2': phone2,
       'updatedAt': FieldValue.serverTimestamp(),
     });
   }
@@ -263,6 +281,33 @@ class AuthRepository {
     await _firestore.collection('users').doc(uid).delete();
   }
 
+  /// Batch-add multiple users to a tsiwa by appending the tsiwaId
+  /// to each user's assignedTsiwaIds and setting default tsiwaRole.
+  Future<int> batchAddUsersToTsiwa({
+    required List<String> userIds,
+    required String tsiwaId,
+  }) async {
+    if (userIds.isEmpty) return 0;
+
+    int added = 0;
+    for (int i = 0; i < userIds.length; i += 500) {
+      final chunk = userIds.sublist(
+          i, i + 500 > userIds.length ? userIds.length : i + 500);
+      final batch = _firestore.batch();
+      for (final uid in chunk) {
+        final ref = _firestore.collection('users').doc(uid);
+        batch.update(ref, {
+          'assignedTsiwaIds': FieldValue.arrayUnion([tsiwaId]),
+          'tsiwaRoles.$tsiwaId': 'member',
+          'updatedAt': FieldValue.serverTimestamp(),
+        });
+      }
+      await batch.commit();
+      added += chunk.length;
+    }
+    return added;
+  }
+
   /// Batch-create multiple member accounts from CSV import.
   /// Deduplicates by phone within the import list and against existing users.
   /// Respects the Firestore 500-operation batch limit by chunking.
@@ -316,6 +361,47 @@ class AuthRepository {
     }
 
     return created;
+  }
+
+  /// Ensure each edir in [edirIds] has an EdirMember doc for this user.
+  /// Skips creation if a doc with matching phone already exists.
+  Future<void> syncEdirMemberDocs({
+    required String areaId,
+    required List<String> edirIds,
+    required String displayName,
+    String christianName = '',
+    required String phone,
+  }) async {
+    for (final edirId in edirIds) {
+      final col = _firestore.collection(
+        'areas/$areaId/edirs/$edirId/members',
+      );
+      // Check if a doc with this phone already exists
+      final existing =
+          await col.where('phone', isEqualTo: phone).limit(1).get();
+      if (existing.docs.isNotEmpty) continue;
+
+      await col.add({
+        'fullName': displayName,
+        'christianName': christianName,
+        'phone': phone,
+        'status': 'active',
+        'totalPaid': 0,
+        'balance': 0,
+        'paidMonths': 0,
+        'lastPaymentDate': null,
+        'createdAt': FieldValue.serverTimestamp(),
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
+
+      // Update member count
+      try {
+        final countSnap = await col.get();
+        await _firestore.doc('areas/$areaId/edirs/$edirId').update({
+          'memberCount': countSnap.docs.length,
+        });
+      } catch (_) {}
+    }
   }
 
   // ── Firebase Auth (devs only) ──

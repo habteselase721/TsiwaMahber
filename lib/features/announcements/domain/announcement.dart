@@ -40,6 +40,18 @@ enum AnnouncementPriority {
   }
 }
 
+enum AnnouncementTarget {
+  all,
+  tsiwa;
+
+  String get firestoreValue => name;
+
+  static AnnouncementTarget fromString(String? value) {
+    if (value == 'tsiwa') return AnnouncementTarget.tsiwa;
+    return AnnouncementTarget.all;
+  }
+}
+
 class Announcement {
   final String id;
   final String title;
@@ -47,9 +59,13 @@ class Announcement {
   final AnnouncementPriority priority;
   final String authorId;
   final String authorName;
+  final AnnouncementTarget targetType;
+  final String targetId;
+  final String targetName;
   final int readCount;
   final bool isActive;
   final DateTime? expiresAt;
+  final DateTime? scheduledAt;
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
@@ -60,9 +76,13 @@ class Announcement {
     this.priority = AnnouncementPriority.normal,
     this.authorId = '',
     this.authorName = '',
+    this.targetType = AnnouncementTarget.all,
+    this.targetId = '',
+    this.targetName = '',
     this.readCount = 0,
     this.isActive = true,
     this.expiresAt,
+    this.scheduledAt,
     this.createdAt,
     this.updatedAt,
   });
@@ -78,9 +98,14 @@ class Announcement {
           data['priority'] as String?),
       authorId: data['authorId'] as String? ?? '',
       authorName: data['authorName'] as String? ?? '',
+      targetType: AnnouncementTarget.fromString(
+          data['targetType'] as String?),
+      targetId: data['targetId'] as String? ?? '',
+      targetName: data['targetName'] as String? ?? '',
       readCount: data['readCount'] as int? ?? 0,
       isActive: data['isActive'] as bool? ?? true,
       expiresAt: (data['expiresAt'] as Timestamp?)?.toDate(),
+      scheduledAt: (data['scheduledAt'] as Timestamp?)?.toDate(),
       createdAt: (data['createdAt'] as Timestamp?)?.toDate(),
       updatedAt: (data['updatedAt'] as Timestamp?)?.toDate(),
     );
@@ -93,10 +118,15 @@ class Announcement {
       'priority': priority.firestoreValue,
       'authorId': authorId,
       'authorName': authorName,
+      'targetType': targetType.firestoreValue,
+      if (targetId.isNotEmpty) 'targetId': targetId,
+      if (targetName.isNotEmpty) 'targetName': targetName,
       'readCount': 0,
       'isActive': true,
       if (expiresAt != null)
         'expiresAt': Timestamp.fromDate(expiresAt!),
+      if (scheduledAt != null)
+        'scheduledAt': Timestamp.fromDate(scheduledAt!),
       'createdAt': FieldValue.serverTimestamp(),
       'updatedAt': FieldValue.serverTimestamp(),
     };
@@ -121,9 +151,13 @@ class Announcement {
     AnnouncementPriority? priority,
     String? authorId,
     String? authorName,
+    AnnouncementTarget? targetType,
+    String? targetId,
+    String? targetName,
     int? readCount,
     bool? isActive,
     DateTime? expiresAt,
+    DateTime? scheduledAt,
   }) {
     return Announcement(
       id: id ?? this.id,
@@ -132,9 +166,13 @@ class Announcement {
       priority: priority ?? this.priority,
       authorId: authorId ?? this.authorId,
       authorName: authorName ?? this.authorName,
+      targetType: targetType ?? this.targetType,
+      targetId: targetId ?? this.targetId,
+      targetName: targetName ?? this.targetName,
       readCount: readCount ?? this.readCount,
       isActive: isActive ?? this.isActive,
       expiresAt: expiresAt ?? this.expiresAt,
+      scheduledAt: scheduledAt ?? this.scheduledAt,
     );
   }
 }

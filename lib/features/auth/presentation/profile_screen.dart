@@ -1,8 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:tsiwa_mahber/core/constants/app_constants.dart';
 import 'package:tsiwa_mahber/core/theme/app_theme.dart';
 import 'package:tsiwa_mahber/features/auth/data/auth_repository.dart';
 import 'package:tsiwa_mahber/features/auth/domain/app_user.dart';
 import 'package:tsiwa_mahber/core/l10n/app_strings.dart';
+import 'package:tsiwa_mahber/features/auth/presentation/change_code_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   final AppUser user;
@@ -23,7 +26,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final _authRepository = AuthRepository();
 
   late final TextEditingController _nameController;
+  late final TextEditingController _christianNameController;
   late final TextEditingController _phoneController;
+  late final TextEditingController _phone2Controller;
   bool _isSaving = false;
 
   bool get _canEdit => widget.user.role.isDeveloper;
@@ -33,14 +38,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.initState();
     _nameController =
         TextEditingController(text: widget.user.displayName);
+    _christianNameController =
+        TextEditingController(text: widget.user.christianName);
     _phoneController =
         TextEditingController(text: widget.user.phone);
+    _phone2Controller =
+        TextEditingController(text: widget.user.phone2);
   }
 
   @override
   void dispose() {
     _nameController.dispose();
+    _christianNameController.dispose();
     _phoneController.dispose();
+    _phone2Controller.dispose();
     super.dispose();
   }
 
@@ -78,6 +89,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     style: const TextStyle(
                         fontSize: 20, fontWeight: FontWeight.bold),
                   ),
+                  if (widget.user.christianName.isNotEmpty) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      widget.user.christianName,
+                      style: const TextStyle(
+                          fontSize: 14, color: AppTheme.textMuted),
+                    ),
+                  ],
                   const SizedBox(height: 4),
                   Text(
                     widget.user.email,
@@ -134,10 +153,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       const SizedBox(height: 16),
                       TextFormField(
+                        controller: _christianNameController,
+                        decoration: InputDecoration(
+                          labelText: S.christianName,
+                          prefixIcon: Icon(Icons.church_outlined),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      TextFormField(
                         controller: _phoneController,
                         decoration: InputDecoration(
                           labelText: S.phone,
                           prefixIcon: Icon(Icons.phone_outlined),
+                        ),
+                        keyboardType: TextInputType.phone,
+                      ),
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        controller: _phone2Controller,
+                        decoration: InputDecoration(
+                          labelText: S.additionalPhone,
+                          prefixIcon: Icon(Icons.phone_outlined),
+                          hintText: S.optionalField,
                         ),
                         keyboardType: TextInputType.phone,
                       ),
@@ -163,6 +200,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ],
           const SizedBox(height: 16),
+          _buildChangeCodeTile(),
+          const SizedBox(height: 16),
           Card(
             child: ListTile(
               leading: const Icon(Icons.logout, color: Colors.red),
@@ -186,6 +225,58 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  Widget _buildChangeCodeTile() {
+    // Devs can always change their code
+    if (widget.user.role.isDeveloper) {
+      return Card(
+        child: ListTile(
+          leading: const Icon(Icons.lock_outline),
+          title: Text(S.changeCode),
+          trailing: const Icon(Icons.chevron_right),
+          onTap: () => _openChangeCode(),
+        ),
+      );
+    }
+
+    // For members, check Firestore security settings
+    return StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+      stream: FirebaseFirestore.instance
+          .collection('areas')
+          .doc(AppConstants.defaultAreaId)
+          .collection('settings')
+          .doc('security')
+          .snapshots(),
+      builder: (context, snapshot) {
+        final data = snapshot.data?.data() ?? {};
+        final globalEnabled = data['passwordChangeEnabled'] as bool? ?? true;
+        final disabledUsers = List<String>.from(
+            data['passwordChangeDisabledUsers'] as List? ?? []);
+        final isDisabledForUser = disabledUsers.contains(widget.user.uid);
+        final canChange = globalEnabled && !isDisabledForUser;
+
+        if (!canChange) return const SizedBox.shrink();
+
+        return Card(
+          child: ListTile(
+            leading: const Icon(Icons.lock_outline),
+            title: Text(S.changeCode),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => _openChangeCode(),
+          ),
+        );
+      },
+    );
+  }
+
+  void _openChangeCode() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ChangeCodeScreen(user: widget.user),
+      ),
+    );
+  }
+
   Future<void> _saveProfile() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -195,7 +286,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
       await _authRepository.updateProfile(
         uid: widget.user.uid,
         displayName: _nameController.text.trim(),
+        christianName: _christianNameController.text.trim(),
         phone: _phoneController.text.trim(),
+        phone2: _phone2Controller.text.trim(),
       );
 
       if (mounted) {

@@ -7,6 +7,7 @@ import 'package:tsiwa_mahber/features/announcements/domain/announcement.dart';
 import 'package:tsiwa_mahber/features/announcements/domain/read_receipt.dart';
 import 'package:tsiwa_mahber/features/auth/domain/app_user.dart';
 import 'package:tsiwa_mahber/core/l10n/app_strings.dart';
+import 'package:cloud_firestore/cloud_firestore.dart' as fs;
 
 class AnnouncementDetailScreen extends StatefulWidget {
   final String areaId;
@@ -28,7 +29,31 @@ class AnnouncementDetailScreen extends StatefulWidget {
 class _AnnouncementDetailScreenState
     extends State<AnnouncementDetailScreen> {
   final _repository = AnnouncementRepository();
-  bool _isMarking = false;
+  bool _hasAutoMarked = false;
+
+  bool get _isDev =>
+      widget.currentUser?.role == UserRole.developer;
+  bool get _isAdmin =>
+      widget.currentUser?.role.canEdit ?? false;
+
+  bool get _canSeeReadReceipts {
+    final role = widget.currentUser?.role;
+    if (role == null) return false;
+    return role.canEdit || role.isDeveloper;
+  }
+
+  void _autoMarkAsRead() {
+    if (_hasAutoMarked) return;
+    final userId = widget.currentUser?.uid ?? '';
+    if (userId.isEmpty) return;
+    _hasAutoMarked = true;
+    _repository.markAsRead(
+      areaId: widget.areaId,
+      announcementId: widget.announcementId,
+      userId: userId,
+      userName: widget.currentUser?.displayName ?? '',
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -63,9 +88,21 @@ class _AnnouncementDetailScreenState
           );
         }
 
+        _autoMarkAsRead();
+
         return Scaffold(
           appBar: AppBar(
             title: Text(S.announcement),
+            actions: [
+              if (_isDev || _isAdmin)
+                IconButton(
+                  icon: const Icon(Icons.notifications_active,
+                      color: Colors.orange),
+                  tooltip: S.ringBell,
+                  onPressed: () =>
+                      _ringBell(announcement),
+                ),
+            ],
           ),
           body: SingleChildScrollView(
             padding: const EdgeInsets.all(16),
@@ -75,10 +112,9 @@ class _AnnouncementDetailScreenState
                 _buildHeader(announcement),
                 const SizedBox(height: 16),
                 _buildBody(announcement),
-                const SizedBox(height: 16),
-                _buildReadButton(announcement),
                 const SizedBox(height: 24),
-                _buildReadReceipts(),
+                if (_canSeeReadReceipts)
+                  _buildReadReceipts(),
               ],
             ),
           ),
@@ -155,19 +191,21 @@ class _AnnouncementDetailScreenState
                 ],
               ],
             ),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                const Icon(Icons.visibility, size: 14,
-                    color: AppTheme.textMuted),
-                const SizedBox(width: 4),
-                Text(
-                  '${announcement.readCount} ሰው አንብበዋል',
-                  style: const TextStyle(
-                      fontSize: 13, color: AppTheme.textMuted),
-                ),
-              ],
-            ),
+            if (_canSeeReadReceipts) ...[
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  const Icon(Icons.visibility, size: 14,
+                      color: AppTheme.textMuted),
+                  const SizedBox(width: 4),
+                  Text(
+                    '${announcement.readCount} ሰው አንብበዋል',
+                    style: const TextStyle(
+                        fontSize: 13, color: AppTheme.textMuted),
+                  ),
+                ],
+              ),
+            ],
           ],
         ),
       ),
@@ -186,49 +224,6 @@ class _AnnouncementDetailScreenState
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildReadButton(Announcement announcement) {
-    final userId = widget.currentUser?.uid ?? '';
-    if (userId.isEmpty) return const SizedBox.shrink();
-
-    return StreamBuilder<bool>(
-      stream: _repository.watchHasUserRead(
-          widget.areaId, announcement.id, userId),
-      builder: (context, snapshot) {
-        final hasRead = snapshot.data ?? false;
-
-        if (hasRead) {
-          return SizedBox(
-            width: double.infinity,
-            child: FilledButton.icon(
-              onPressed: null,
-              icon: const Icon(Icons.done_all),
-              label: Text(S.iHaveRead),
-              style: FilledButton.styleFrom(
-                backgroundColor: Colors.green.withValues(alpha: 0.2),
-                foregroundColor: Colors.green,
-              ),
-            ),
-          );
-        }
-
-        return SizedBox(
-          width: double.infinity,
-          child: FilledButton.icon(
-            onPressed: _isMarking ? null : () => _markAsRead(),
-            icon: _isMarking
-                ? const SizedBox(
-                    height: 16,
-                    width: 16,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : const Icon(Icons.check),
-            label: Text(S.markAsRead),
-          ),
-        );
-      },
     );
   }
 
@@ -311,28 +306,42 @@ class _AnnouncementDetailScreenState
     );
   }
 
-  Future<void> _markAsRead() async {
-    final userId = widget.currentUser?.uid ?? '';
-    final userName = widget.currentUser?.displayName ?? '';
-    if (userId.isEmpty) return;
+  Future<void> _ringBell(Announcement announcement) async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(S.ringBell),
+        content: Text(S.ringBellConfirm),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text(S.cancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: Text(S.ringBell),
+          ),
+        ],
+      ),
+    );
+    if (confirm != true) return;
 
-    setState(() => _isMarking = true);
+    await fs.FirebaseFirestore.instance
+        .collection('areas/${widget.areaId}/ringBell')
+        .add({
+      'title': announcement.title,
+      'body': announcement.body.length > 100
+          ? '${announcement.body.substring(0, 100)}...'
+          : announcement.body,
+      'announcementId': widget.announcementId,
+      'triggeredBy': widget.currentUser?.displayName ?? '',
+      'createdAt': fs.FieldValue.serverTimestamp(),
+    });
 
-    try {
-      await _repository.markAsRead(
-        areaId: widget.areaId,
-        announcementId: widget.announcementId,
-        userId: userId,
-        userName: userName,
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(S.ringBellSent)),
       );
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('ስህተት: $e')),
-        );
-      }
-    } finally {
-      if (mounted) setState(() => _isMarking = false);
     }
   }
 }

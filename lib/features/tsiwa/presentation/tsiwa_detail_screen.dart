@@ -10,7 +10,10 @@ import 'package:tsiwa_mahber/features/tsiwa/data/tsiwa_repository.dart';
 import 'package:tsiwa_mahber/features/tsiwa/domain/tsiwa_mahber.dart';
 import 'package:tsiwa_mahber/features/tsiwa/presentation/rotation_screen.dart';
 import 'package:tsiwa_mahber/features/tsiwa/presentation/tsiwa_form_screen.dart';
+import 'package:tsiwa_mahber/features/notifications/data/notification_repository.dart';
+import 'package:tsiwa_mahber/features/notifications/domain/app_notification.dart';
 import 'package:tsiwa_mahber/core/l10n/app_strings.dart';
+import 'package:tsiwa_mahber/core/utils/image_url_helper.dart';
 
 class TsiwaDetailScreen extends StatefulWidget {
   final String areaId;
@@ -29,11 +32,23 @@ class TsiwaDetailScreen extends StatefulWidget {
 class _TsiwaDetailScreenState extends State<TsiwaDetailScreen> {
   final _tsiwaRepository = TsiwaRepository();
   final _authRepository = AuthRepository();
+  final _notificationRepository = NotificationRepository();
+  late int _selectedYear;
+  late final Stream<TsiwaMahber?> _tsiwaStream;
+  late final Stream<List<AppUser>> _membersStream;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedYear = EthiopianCalendar.today().year;
+    _tsiwaStream = _tsiwaRepository.watchTsiwa(widget.areaId, widget.tsiwaId);
+    _membersStream = _authRepository.watchMembersByTsiwa(widget.tsiwaId);
+  }
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<TsiwaMahber?>(
-      stream: _tsiwaRepository.watchTsiwa(widget.areaId, widget.tsiwaId),
+      stream: _tsiwaStream,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Scaffold(
@@ -73,7 +88,7 @@ class _TsiwaDetailScreenState extends State<TsiwaDetailScreen> {
                 const SizedBox(height: 16),
                 _buildMonthlyTsiwaSection(tsiwa),
                 const SizedBox(height: 16),
-                _buildZikirFeedingSection(tsiwa),
+                _buildYearlyZikirSection(tsiwa),
                 const SizedBox(height: 16),
                 _buildStatusSection(tsiwa),
                 const SizedBox(height: 16),
@@ -82,6 +97,8 @@ class _TsiwaDetailScreenState extends State<TsiwaDetailScreen> {
                 _buildMembersSection(tsiwa),
                 const SizedBox(height: 16),
                 _buildRotationSection(tsiwa),
+                const SizedBox(height: 16),
+                _buildMonthlyOrderSection(tsiwa),
                 const SizedBox(height: 32),
               ],
             ),
@@ -96,6 +113,31 @@ class _TsiwaDetailScreenState extends State<TsiwaDetailScreen> {
       title: S.basicInfo,
       icon: Icons.info_outline,
       children: [
+        if (tsiwa.profileImageUrl.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: Center(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Image.network(
+                  ImageUrlHelper.toDirectUrl(tsiwa.profileImageUrl),
+                  width: 80,
+                  height: 80,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) => Container(
+                    width: 80,
+                    height: 80,
+                    decoration: BoxDecoration(
+                      color: AppTheme.primary.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Icon(Icons.church,
+                        color: AppTheme.primary, size: 36),
+                  ),
+                ),
+              ),
+            ),
+          ),
         _InfoRow(label: S.name, value: tsiwa.name),
         if (tsiwa.churchName.isNotEmpty)
           _InfoRow(label: 'ቤተ ክርስቲያን', value: tsiwa.churchName),
@@ -115,70 +157,66 @@ class _TsiwaDetailScreenState extends State<TsiwaDetailScreen> {
       icon: Icons.calendar_today,
       iconColor: AppTheme.primary,
       children: [
-        _InfoRow(
-          label: S.day,
-          value: 'በየወሩ ${tsiwa.monthlyTsiwaDay}',
-        ),
+        _InfoRow(label: S.day, value: 'በየወሩ ${tsiwa.monthlyTsiwaDay}'),
         if (tsiwa.monthlyTsiwaDayNote.isNotEmpty)
           _InfoRow(label: S.note, value: tsiwa.monthlyTsiwaDayNote),
       ],
     );
   }
 
-  Widget _buildZikirFeedingSection(TsiwaMahber tsiwa) {
-    final hasZikir = tsiwa.zikirMonth != null && tsiwa.zikirDay != null;
-    final hasFeeding =
-        tsiwa.feedingMonth != null && tsiwa.feedingDay != null;
-
-    if (!hasZikir && !hasFeeding) {
+  Widget _buildYearlyZikirSection(TsiwaMahber tsiwa) {
+    if (tsiwa.yearlyZikir.isEmpty) {
       return _SectionCard(
-        title: S.zikirFeedingSection,
-        icon: Icons.restaurant,
+        title: S.yearlyZikirTitle,
+        icon: Icons.auto_awesome,
         children: [
           Padding(
-            padding: EdgeInsets.symmetric(vertical: 8),
+            padding: const EdgeInsets.symmetric(vertical: 8),
             child: Text(
-              S.noZikirOrFeeding,
-              style: TextStyle(color: AppTheme.textMuted, fontSize: 13),
+              S.noYearlyZikirYet,
+              style: const TextStyle(color: AppTheme.textMuted, fontSize: 13),
             ),
           ),
         ],
       );
     }
 
-    return Column(
+    return _SectionCard(
+      title: S.yearlyZikirTitle,
+      icon: Icons.auto_awesome,
+      iconColor: AppTheme.secondary,
       children: [
-        if (hasZikir)
-          _SectionCard(
-            title: tsiwa.zikirTitle,
-            icon: Icons.auto_awesome,
-            iconColor: AppTheme.secondary,
-            children: [
-              _InfoRow(
-                label: S.day,
-                value:
-                    '${AppConstants.ethiopianMonthName(tsiwa.zikirMonth!)} ${tsiwa.zikirDay}',
-              ),
-              if (tsiwa.zikirNote.isNotEmpty)
-                _InfoRow(label: S.note, value: tsiwa.zikirNote),
-            ],
-          ),
-        if (hasZikir && hasFeeding) const SizedBox(height: 16),
-        if (hasFeeding)
-          _SectionCard(
-            title: tsiwa.feedingTitle,
-            icon: Icons.restaurant,
-            iconColor: Colors.teal,
-            children: [
-              _InfoRow(
-                label: S.day,
-                value:
-                    '${AppConstants.ethiopianMonthName(tsiwa.feedingMonth!)} ${tsiwa.feedingDay}',
-              ),
-              if (tsiwa.feedingNote.isNotEmpty)
-                _InfoRow(label: S.note, value: tsiwa.feedingNote),
-            ],
-          ),
+        ...tsiwa.yearlyZikir.map((entry) {
+          final monthName = AppConstants.ethiopianMonthName(entry.month);
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4),
+            child: Row(
+              children: [
+                const Icon(Icons.event, size: 16, color: AppTheme.secondary),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '$monthName ${entry.day}',
+                        style: const TextStyle(fontSize: 14),
+                      ),
+                      if (entry.note.isNotEmpty)
+                        Text(
+                          entry.note,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: AppTheme.textMuted,
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
+        }),
       ],
     );
   }
@@ -193,32 +231,37 @@ class _TsiwaDetailScreenState extends State<TsiwaDetailScreen> {
           value: tsiwa.isActive ? 'አዎ' : 'አይ',
           valueColor: tsiwa.isActive ? AppTheme.success : Colors.red,
         ),
-        _InfoRow(
-          label: S.archive,
-          value: tsiwa.isArchived ? 'አዎ' : 'አይ',
-        ),
+        _InfoRow(label: S.archive, value: tsiwa.isArchived ? 'አዎ' : 'አይ'),
       ],
     );
   }
 
   Widget _buildMembersSection(TsiwaMahber tsiwa) {
     return StreamBuilder<List<AppUser>>(
-      stream: _authRepository.watchMembersByTsiwa(widget.tsiwaId),
+      stream: _membersStream,
       builder: (context, snapshot) {
         final members = snapshot.data ?? [];
         final museCount = members
-            .where((m) => m.tsiwaRoles[widget.tsiwaId] == 'muse' ||
-                m.tsiwaRoles[widget.tsiwaId] == 'assistant_muse')
+            .where(
+              (m) =>
+                  m.tsiwaRoles[widget.tsiwaId] == 'muse' ||
+                  m.tsiwaRoles[widget.tsiwaId] == 'assistant_muse',
+            )
             .length;
 
         return _SectionCard(
           title: S.members,
           icon: Icons.people,
           iconColor: AppTheme.primary,
+          trailing: IconButton(
+            icon: const Icon(Icons.person_add, color: AppTheme.primary),
+            tooltip: S.addMembersFromGlobal,
+            onPressed: () => _showBulkAddMembersDialog(members),
+          ),
           children: [
             _InfoRow(
               label: S.total,
-              value: '${members.length} አባላት · $museCount ሙሴ',
+              value: '${members.length} ማህበርተኞች · $museCount ሙሴ',
             ),
             if (snapshot.connectionState == ConnectionState.waiting)
               const Padding(
@@ -236,8 +279,7 @@ class _TsiwaDetailScreenState extends State<TsiwaDetailScreen> {
                 padding: const EdgeInsets.symmetric(vertical: 8),
                 child: Text(
                   S.noMembersYet,
-                  style: TextStyle(
-                      color: AppTheme.textMuted, fontSize: 13),
+                  style: TextStyle(color: AppTheme.textMuted, fontSize: 13),
                 ),
               )
             else
@@ -246,6 +288,179 @@ class _TsiwaDetailScreenState extends State<TsiwaDetailScreen> {
         );
       },
     );
+  }
+
+  Future<void> _showBulkAddMembersDialog(List<AppUser> currentMembers) async {
+    final currentIds = currentMembers.map((m) => m.uid).toSet();
+
+    // Fetch all users in this area
+    final allUsersSnap = await _authRepository
+        .watchUsersByArea(widget.areaId)
+        .first;
+
+    // Filter out users already assigned to this tsiwa
+    final available = allUsersSnap
+        .where((u) => !currentIds.contains(u.uid))
+        .toList();
+
+    if (!mounted) return;
+
+    if (available.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(S.noUnassignedMembers)),
+      );
+      return;
+    }
+
+    final selected = <String>{};
+    String searchQuery = '';
+
+    final result = await showDialog<Set<String>>(
+      context: context,
+      builder: (ctx) {
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            final filtered = searchQuery.isEmpty
+                ? available
+                : available.where((u) {
+                    final q = searchQuery.toLowerCase();
+                    return u.displayName.toLowerCase().contains(q) ||
+                        u.christianName.toLowerCase().contains(q) ||
+                        u.phone.contains(q);
+                  }).toList();
+
+            return AlertDialog(
+              title: Text(S.addMembersFromGlobal),
+              content: SizedBox(
+                width: double.maxFinite,
+                height: 400,
+                child: Column(
+                  children: [
+                    TextField(
+                      decoration: InputDecoration(
+                        hintText: S.searchMembers,
+                        prefixIcon: const Icon(Icons.search, size: 20),
+                        isDense: true,
+                        contentPadding: const EdgeInsets.symmetric(
+                          vertical: 8, horizontal: 12,
+                        ),
+                      ),
+                      onChanged: (v) =>
+                          setDialogState(() => searchQuery = v),
+                    ),
+                    const SizedBox(height: 8),
+                    if (selected.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: Text(
+                          S.selected(selected.length),
+                          style: const TextStyle(
+                            color: AppTheme.primary,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 13,
+                          ),
+                        ),
+                      ),
+                    Expanded(
+                      child: filtered.isEmpty
+                          ? Center(
+                              child: Text(
+                                S.noUnassignedMembers,
+                                style: const TextStyle(
+                                  color: AppTheme.textMuted,
+                                ),
+                              ),
+                            )
+                          : ListView.builder(
+                              itemCount: filtered.length,
+                              itemBuilder: (ctx, i) {
+                                final user = filtered[i];
+                                final isSelected =
+                                    selected.contains(user.uid);
+                                return CheckboxListTile(
+                                  dense: true,
+                                  value: isSelected,
+                                  onChanged: (v) {
+                                    setDialogState(() {
+                                      if (v == true) {
+                                        selected.add(user.uid);
+                                      } else {
+                                        selected.remove(user.uid);
+                                      }
+                                    });
+                                  },
+                                  title: Text(
+                                    user.displayName,
+                                    style: const TextStyle(fontSize: 14),
+                                  ),
+                                  subtitle: user.christianName.isNotEmpty
+                                      ? Text(
+                                          user.christianName,
+                                          style: const TextStyle(
+                                            fontSize: 12,
+                                          ),
+                                        )
+                                      : null,
+                                  secondary: CircleAvatar(
+                                    backgroundColor: AppTheme.primary
+                                        .withValues(alpha: 0.15),
+                                    radius: 16,
+                                    child: Text(
+                                      user.displayName.isNotEmpty
+                                          ? user.displayName[0]
+                                          : '?',
+                                      style: const TextStyle(fontSize: 12),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(ctx),
+                  child: Text(S.cancel),
+                ),
+                ElevatedButton(
+                  onPressed: selected.isEmpty
+                      ? null
+                      : () => Navigator.pop(ctx, selected),
+                  child: Text(
+                    '${S.add} (${selected.length})',
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+
+    if (result == null || result.isEmpty || !mounted) return;
+
+    try {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(S.addingMembers)),
+      );
+      final count = await _authRepository.batchAddUsersToTsiwa(
+        userIds: result.toList(),
+        tsiwaId: widget.tsiwaId,
+      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(S.membersAdded(count))),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(S.failedToAddMembers)),
+        );
+      }
+    }
   }
 
   Widget _buildMemberTile(AppUser member) {
@@ -277,18 +492,14 @@ class _TsiwaDetailScreenState extends State<TsiwaDetailScreen> {
             ),
           ),
           Container(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
             decoration: BoxDecoration(
               color: AppTheme.primary.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Text(
               roleLabel,
-              style: const TextStyle(
-                fontSize: 11,
-                color: AppTheme.primary,
-              ),
+              style: const TextStyle(fontSize: 11, color: AppTheme.primary),
             ),
           ),
         ],
@@ -298,38 +509,30 @@ class _TsiwaDetailScreenState extends State<TsiwaDetailScreen> {
 
   Widget _buildScheduleSection(TsiwaMahber tsiwa) {
     final ethToday = EthiopianCalendar.today();
-    final tswaDays = EthiopianCalendar.daysUntilMonthlyDay(tsiwa.monthlyTsiwaDay);
-
-    final hasZikir = tsiwa.zikirMonth != null && tsiwa.zikirDay != null;
-    final hasFeeding = tsiwa.feedingMonth != null && tsiwa.feedingDay != null;
+    final tswaDays = EthiopianCalendar.daysUntilMonthlyDay(
+      tsiwa.monthlyTsiwaDay,
+    );
 
     return _SectionCard(
       title: S.calendar,
       icon: Icons.schedule,
       iconColor: Colors.teal,
       children: [
-        _InfoRow(
-          label: 'ዛሬ',
-          value: ethToday.formatted,
-        ),
+        _InfoRow(label: 'ዛሬ', value: ethToday.formatted),
         const SizedBox(height: 8),
         _buildCountdownChip(
           'ፅዋ ቀን ${tsiwa.monthlyTsiwaDay}',
           tswaDays,
           AppTheme.primary,
         ),
-        if (hasZikir)
-          _buildCountdownChip(
-            '${tsiwa.zikirTitle} (${AppConstants.ethiopianMonthName(tsiwa.zikirMonth!)} ${tsiwa.zikirDay})',
-            EthiopianCalendar.daysUntilDate(tsiwa.zikirMonth!, tsiwa.zikirDay!),
+        ...tsiwa.yearlyZikir.map((entry) {
+          final monthName = AppConstants.ethiopianMonthName(entry.month);
+          return _buildCountdownChip(
+            '${S.yearlyZikirTitle} ($monthName ${entry.day})',
+            EthiopianCalendar.daysUntilDate(entry.month, entry.day),
             AppTheme.secondary,
-          ),
-        if (hasFeeding)
-          _buildCountdownChip(
-            '${tsiwa.feedingTitle} (${AppConstants.ethiopianMonthName(tsiwa.feedingMonth!)} ${tsiwa.feedingDay})',
-            EthiopianCalendar.daysUntilDate(tsiwa.feedingMonth!, tsiwa.feedingDay!),
-            Colors.teal,
-          ),
+          );
+        }),
       ],
     );
   }
@@ -340,12 +543,7 @@ class _TsiwaDetailScreenState extends State<TsiwaDetailScreen> {
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
         children: [
-          Expanded(
-            child: Text(
-              label,
-              style: const TextStyle(fontSize: 13),
-            ),
-          ),
+          Expanded(child: Text(label, style: const TextStyle(fontSize: 13))),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             decoration: BoxDecoration(
@@ -415,18 +613,12 @@ class _TsiwaDetailScreenState extends State<TsiwaDetailScreen> {
                     SizedBox(height: 2),
                     Text(
                       S.rotationOrder,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: AppTheme.textMuted,
-                      ),
+                      style: TextStyle(fontSize: 12, color: AppTheme.textMuted),
                     ),
                   ],
                 ),
               ),
-              const Icon(
-                Icons.chevron_right,
-                color: AppTheme.textMuted,
-              ),
+              const Icon(Icons.chevron_right, color: AppTheme.textMuted),
             ],
           ),
         ),
@@ -434,14 +626,495 @@ class _TsiwaDetailScreenState extends State<TsiwaDetailScreen> {
     );
   }
 
+  /// Resolve the order map for a given year, handling legacy year-0 data.
+  Map<int, String> _orderForYear(TsiwaMahber tsiwa, int year) {
+    if (tsiwa.monthlyOrder.containsKey(year)) {
+      return tsiwa.monthlyOrder[year]!;
+    }
+    // Legacy flat data stored under year 0
+    if (tsiwa.monthlyOrder.containsKey(0)) {
+      return tsiwa.monthlyOrder[0]!;
+    }
+    return {};
+  }
+
+  Widget _buildMonthlyOrderSection(TsiwaMahber tsiwa) {
+    return StreamBuilder<List<AppUser>>(
+      stream: _membersStream,
+      builder: (context, snap) {
+        final members = snap.data ?? [];
+        final ethToday = EthiopianCalendar.today();
+        final order = _orderForYear(tsiwa, _selectedYear);
+
+        return _SectionCard(
+          title: S.monthlyOrderTable,
+          icon: Icons.table_chart_outlined,
+          iconColor: Colors.deepPurple,
+          trailing: _buildYearSwitcher(ethToday.year),
+          children: [
+            for (int m = 1; m <= AppConstants.tsiwaMonthCount; m++)
+              _buildMonthOrderRow(tsiwa, m, members, order, ethToday),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildYearSwitcher(int currentEthYear) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        InkWell(
+          onTap: () => setState(() => _selectedYear--),
+          borderRadius: BorderRadius.circular(12),
+          child: const Padding(
+            padding: EdgeInsets.all(4),
+            child: Icon(Icons.chevron_left, size: 20, color: AppTheme.primary),
+          ),
+        ),
+        Text(
+          S.yearLabel(_selectedYear),
+          style: const TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+            color: AppTheme.primary,
+          ),
+        ),
+        InkWell(
+          onTap: () => setState(() => _selectedYear++),
+          borderRadius: BorderRadius.circular(12),
+          child: const Padding(
+            padding: EdgeInsets.all(4),
+            child: Icon(Icons.chevron_right, size: 20, color: AppTheme.primary),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMonthOrderRow(
+    TsiwaMahber tsiwa,
+    int month,
+    List<AppUser> members,
+    Map<int, String> yearOrder,
+    EthiopianDate ethToday,
+  ) {
+    final memberId = yearOrder[month];
+    final assigned = memberId != null
+        ? members.where((m) => m.uid == memberId).firstOrNull
+        : null;
+    final monthName = AppConstants.ethiopianMonthName(month);
+    final isCurrent = ethToday.month == month && ethToday.year == _selectedYear;
+
+    return InkWell(
+      onTap: () => _showAssignDialog(tsiwa, month, members),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+        decoration: BoxDecoration(
+          color: isCurrent ? AppTheme.primary.withValues(alpha: 0.08) : null,
+          border: Border(
+            bottom: BorderSide(
+              color: AppTheme.textMuted.withValues(alpha: 0.15),
+            ),
+          ),
+        ),
+        child: Row(
+          children: [
+            SizedBox(
+              width: 80,
+              child: Text(
+                monthName,
+                style: TextStyle(
+                  fontWeight: isCurrent ? FontWeight.bold : FontWeight.normal,
+                  fontSize: 13,
+                ),
+              ),
+            ),
+            Expanded(
+              child: Text(
+                assigned?.displayName ?? S.unassigned,
+                style: TextStyle(
+                  fontSize: 13,
+                  color: assigned != null ? null : AppTheme.textMuted,
+                  fontWeight: isCurrent ? FontWeight.bold : FontWeight.normal,
+                ),
+              ),
+            ),
+            if (isCurrent)
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                decoration: BoxDecoration(
+                  color: AppTheme.primary.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  S.now,
+                  style: const TextStyle(
+                    fontSize: 10,
+                    color: AppTheme.primary,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            if (memberId != null) ...[
+              const SizedBox(width: 2),
+              InkWell(
+                onTap: () => _showSwapDialog(tsiwa, month, yearOrder, members),
+                borderRadius: BorderRadius.circular(12),
+                child: const Padding(
+                  padding: EdgeInsets.all(4),
+                  child: Icon(Icons.swap_vert, size: 16, color: Colors.deepPurple),
+                ),
+              ),
+              const SizedBox(width: 2),
+              InkWell(
+                onTap: () => _showNotifyMenu(
+                    tsiwa, month, memberId, assigned, members),
+                borderRadius: BorderRadius.circular(12),
+                child: const Padding(
+                  padding: EdgeInsets.all(4),
+                  child: Icon(Icons.notifications_active,
+                      size: 16, color: Colors.orange),
+                ),
+              ),
+            ],
+            const SizedBox(width: 2),
+            const Icon(Icons.edit_outlined, size: 16, color: AppTheme.textMuted),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _showAssignDialog(
+    TsiwaMahber tsiwa,
+    int month,
+    List<AppUser> members,
+  ) async {
+    final monthName = AppConstants.ethiopianMonthName(month);
+    final yearOrder = _orderForYear(tsiwa, _selectedYear);
+    final currentId = yearOrder[month];
+
+    final selected = await showDialog<String?>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text('$monthName - ${S.assignOrder}'),
+        content: SizedBox(
+          width: double.maxFinite,
+          child: ListView(
+            shrinkWrap: true,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.clear, color: Colors.red),
+                title: Text(S.unassigned),
+                selected: currentId == null,
+                onTap: () => Navigator.pop(ctx, '__clear__'),
+              ),
+              ...members.map((m) => ListTile(
+                    leading: CircleAvatar(
+                      backgroundColor:
+                          AppTheme.primary.withValues(alpha: 0.15),
+                      radius: 16,
+                      child: Text(
+                        m.displayName.isNotEmpty
+                            ? m.displayName[0]
+                            : '?',
+                        style: const TextStyle(fontSize: 12),
+                      ),
+                    ),
+                    title: Text(m.displayName),
+                    subtitle: m.christianName.isNotEmpty
+                        ? Text(m.christianName,
+                            style: const TextStyle(fontSize: 12))
+                        : null,
+                    selected: m.uid == currentId,
+                    onTap: () => Navigator.pop(ctx, m.uid),
+                  )),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    if (selected == null || !mounted) return;
+
+    try {
+      // Build updated order map preserving all years
+      final newAllOrders = Map<int, Map<int, String>>.from(
+        tsiwa.monthlyOrder.map((k, v) => MapEntry(k, Map<int, String>.from(v))),
+      );
+
+      // Resolve legacy year-0 to current year
+      final targetYear = _selectedYear;
+      if (newAllOrders.containsKey(0) && targetYear != 0) {
+        newAllOrders[targetYear] = Map<int, String>.from(newAllOrders[0]!);
+        newAllOrders.remove(0);
+      }
+
+      final yearMap = newAllOrders[targetYear] ?? <int, String>{};
+      if (selected == '__clear__') {
+        yearMap.remove(month);
+      } else {
+        yearMap[month] = selected;
+      }
+      newAllOrders[targetYear] = yearMap;
+
+      await _tsiwaRepository.updateTsiwa(
+        widget.areaId,
+        tsiwa.copyWith(monthlyOrder: newAllOrders),
+      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(S.orderSaved)),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(S.orderSaveFailed)),
+        );
+      }
+    }
+  }
+
+  Future<void> _showSwapDialog(
+    TsiwaMahber tsiwa,
+    int fromMonth,
+    Map<int, String> yearOrder,
+    List<AppUser> members,
+  ) async {
+    final fromName = AppConstants.ethiopianMonthName(fromMonth);
+    final fromUid = yearOrder[fromMonth];
+
+    // Build list of other months that have assignments
+    final otherMonths = <int>[];
+    for (int m = 1; m <= AppConstants.tsiwaMonthCount; m++) {
+      if (m != fromMonth) otherMonths.add(m);
+    }
+
+    final targetMonth = await showDialog<int>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text('$fromName — ${S.swapOrder}'),
+        content: SizedBox(
+          width: double.maxFinite,
+          child: ListView(
+            shrinkWrap: true,
+            children: otherMonths.map((m) {
+              final uid = yearOrder[m];
+              final user = uid != null
+                  ? members.where((u) => u.uid == uid).firstOrNull
+                  : null;
+              final mName = AppConstants.ethiopianMonthName(m);
+              return ListTile(
+                dense: true,
+                title: Text(mName),
+                subtitle: Text(
+                  user?.displayName ?? S.unassigned,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: user != null ? null : AppTheme.textMuted,
+                  ),
+                ),
+                onTap: () => Navigator.pop(ctx, m),
+              );
+            }).toList(),
+          ),
+        ),
+      ),
+    );
+
+    if (targetMonth == null || !mounted) return;
+
+    try {
+      final newAllOrders = Map<int, Map<int, String>>.from(
+        tsiwa.monthlyOrder.map((k, v) => MapEntry(k, Map<int, String>.from(v))),
+      );
+      final targetYear = _selectedYear;
+      if (newAllOrders.containsKey(0) && targetYear != 0) {
+        newAllOrders[targetYear] = Map<int, String>.from(newAllOrders[0]!);
+        newAllOrders.remove(0);
+      }
+      final yearMap = newAllOrders[targetYear] ?? <int, String>{};
+
+      // Swap the two months
+      final toUid = yearMap[targetMonth];
+      if (fromUid != null) {
+        yearMap[targetMonth] = fromUid;
+      } else {
+        yearMap.remove(targetMonth);
+      }
+      if (toUid != null) {
+        yearMap[fromMonth] = toUid;
+      } else {
+        yearMap.remove(fromMonth);
+      }
+      newAllOrders[targetYear] = yearMap;
+
+      await _tsiwaRepository.updateTsiwa(
+        widget.areaId,
+        tsiwa.copyWith(monthlyOrder: newAllOrders),
+      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(S.orderSwapped)),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(S.swapFailed)),
+        );
+      }
+    }
+  }
+
+  void _showNotifyMenu(
+    TsiwaMahber tsiwa,
+    int month,
+    String memberId,
+    AppUser? assigned,
+    List<AppUser> allMembers,
+  ) {
+    final monthName = AppConstants.ethiopianMonthName(month);
+    final ethToday = EthiopianCalendar.today();
+    int daysRemaining = 0;
+    if (_selectedYear == ethToday.year && month > ethToday.month) {
+      daysRemaining = (month - ethToday.month) * 30 - ethToday.day;
+      if (daysRemaining < 0) daysRemaining = 0;
+    }
+
+    showModalBottomSheet(
+      context: context,
+      builder: (ctx) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Text(
+                  '$monthName — ${assigned?.displayName ?? ""}',
+                  style: const TextStyle(
+                      fontSize: 15, fontWeight: FontWeight.w600),
+                ),
+              ),
+              ListTile(
+                leading: const Icon(Icons.alarm, color: Colors.orange),
+                title: Text(S.sendReminder),
+                subtitle: daysRemaining > 0
+                    ? Text(S.turnReminderBody(monthName, daysRemaining))
+                    : null,
+                onTap: () {
+                  Navigator.pop(ctx);
+                  _sendTurnReminder(
+                      tsiwa, month, memberId, assigned, allMembers);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.campaign, color: Colors.red),
+                title: Text(S.sendAlert),
+                subtitle: Text(S.turnAlertBody(monthName)),
+                onTap: () {
+                  Navigator.pop(ctx);
+                  _sendTurnAlert(
+                      tsiwa, month, memberId, assigned, allMembers);
+                },
+              ),
+              const SizedBox(height: 8),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _sendTurnReminder(
+    TsiwaMahber tsiwa,
+    int month,
+    String memberId,
+    AppUser? assigned,
+    List<AppUser> allMembers,
+  ) async {
+    final monthName = AppConstants.ethiopianMonthName(month);
+    final ethToday = EthiopianCalendar.today();
+    int daysRemaining = 0;
+    if (_selectedYear == ethToday.year && month > ethToday.month) {
+      daysRemaining = (month - ethToday.month) * 30 - ethToday.day;
+    }
+
+    final personalNotif = AppNotification(
+      title: S.notifTurnReminder,
+      body: S.turnReminderBody(monthName, daysRemaining),
+      type: NotificationType.turnReminder,
+    );
+    await _notificationRepository.sendNotificationToUser(
+      userId: memberId,
+      notification: personalNotif,
+    );
+
+    final groupNotif = AppNotification(
+      title: '${tsiwa.name} — $monthName',
+      body: S.turnReminderAll(
+          monthName, assigned?.displayName ?? ''),
+      type: NotificationType.turnReminder,
+    );
+    await _notificationRepository.sendNotificationToTsiwaMembers(
+      tsiwaId: widget.tsiwaId,
+      notification: groupNotif,
+    );
+
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(S.reminderSent)),
+      );
+    }
+  }
+
+  Future<void> _sendTurnAlert(
+    TsiwaMahber tsiwa,
+    int month,
+    String memberId,
+    AppUser? assigned,
+    List<AppUser> allMembers,
+  ) async {
+    final monthName = AppConstants.ethiopianMonthName(month);
+
+    final personalNotif = AppNotification(
+      title: S.notifTurnAlert,
+      body: S.turnAlertBody(monthName),
+      type: NotificationType.turnAlert,
+    );
+    await _notificationRepository.sendNotificationToUser(
+      userId: memberId,
+      notification: personalNotif,
+    );
+
+    final groupNotif = AppNotification(
+      title: '${tsiwa.name} — $monthName',
+      body: S.turnReminderAll(
+          monthName, assigned?.displayName ?? ''),
+      type: NotificationType.turnAlert,
+    );
+    await _notificationRepository.sendNotificationToTsiwaMembers(
+      tsiwaId: widget.tsiwaId,
+      notification: groupNotif,
+    );
+
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(S.alertSent)),
+      );
+    }
+  }
+
   void _edit(TsiwaMahber tsiwa) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => TsiwaFormScreen(
-          areaId: widget.areaId,
-          existingTsiwa: tsiwa,
-        ),
+        builder: (context) =>
+            TsiwaFormScreen(areaId: widget.areaId, existingTsiwa: tsiwa),
       ),
     );
   }
@@ -463,9 +1136,9 @@ class _TsiwaDetailScreenState extends State<TsiwaDetailScreen> {
         }
       } catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(S.dataDeleteFailed)),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(S.dataDeleteFailed)));
         }
       }
     }
@@ -476,12 +1149,14 @@ class _SectionCard extends StatelessWidget {
   final String title;
   final IconData icon;
   final Color? iconColor;
+  final Widget? trailing;
   final List<Widget> children;
 
   const _SectionCard({
     required this.title,
     required this.icon,
     this.iconColor,
+    this.trailing,
     required this.children,
   });
 
@@ -497,13 +1172,16 @@ class _SectionCard extends StatelessWidget {
               children: [
                 Icon(icon, size: 20, color: iconColor ?? AppTheme.textMuted),
                 const SizedBox(width: 8),
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
+                Expanded(
+                  child: Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
+                ?trailing,
               ],
             ),
             const SizedBox(height: 12),
@@ -520,11 +1198,7 @@ class _InfoRow extends StatelessWidget {
   final String value;
   final Color? valueColor;
 
-  const _InfoRow({
-    required this.label,
-    required this.value,
-    this.valueColor,
-  });
+  const _InfoRow({required this.label, required this.value, this.valueColor});
 
   @override
   Widget build(BuildContext context) {
@@ -537,19 +1211,13 @@ class _InfoRow extends StatelessWidget {
             width: 100,
             child: Text(
               label,
-              style: const TextStyle(
-                fontSize: 13,
-                color: AppTheme.textMuted,
-              ),
+              style: const TextStyle(fontSize: 13, color: AppTheme.textMuted),
             ),
           ),
           Expanded(
             child: Text(
               value,
-              style: TextStyle(
-                fontSize: 14,
-                color: valueColor,
-              ),
+              style: TextStyle(fontSize: 14, color: valueColor),
             ),
           ),
         ],

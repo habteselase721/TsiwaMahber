@@ -34,6 +34,10 @@ void main() {
       expect(AppConstants.ethiopianMonthName(13), 'ጳጉሜ');
     });
 
+    test('tsiwaMonthCount is 12 (excludes Pagume for tsiwa)', () {
+      expect(AppConstants.tsiwaMonthCount, 12);
+    });
+
     test('ethiopianMonthName returns empty for invalid month', () {
       expect(AppConstants.ethiopianMonthName(0), '');
       expect(AppConstants.ethiopianMonthName(14), '');
@@ -79,7 +83,7 @@ void main() {
     test('MemberRole displayName returns Amharic', () {
       expect(MemberRole.muse.displayName, 'ሙሴ');
       expect(MemberRole.assistantMuse.displayName, 'ረዳት ሙሴ');
-      expect(MemberRole.member.displayName, 'አባል');
+      expect(MemberRole.member.displayName, 'ማህበርተኛ');
       expect(MemberRole.observer.displayName, 'ታዛቢ');
     });
 
@@ -222,17 +226,19 @@ void main() {
   group('TsiwaEvent', () {
     test('TsiwaEventType displayName returns Amharic', () {
       expect(TsiwaEventType.monthlyTsiwa.displayName, 'የወርሃዊ ፅዋ');
-      expect(TsiwaEventType.zikir.displayName, 'ዝክር');
-      expect(TsiwaEventType.feedingDay.displayName, 'ማብላት');
+      expect(TsiwaEventType.yearlyZikir.displayName, 'የዓመታዊ በዓል ዝክር');
       expect(TsiwaEventType.other.displayName, 'ሌላ');
     });
 
     test('TsiwaEventType fromString parses correctly', () {
       expect(TsiwaEventType.fromString('monthly_tsiwa'),
           TsiwaEventType.monthlyTsiwa);
-      expect(TsiwaEventType.fromString('zikir'), TsiwaEventType.zikir);
+      expect(TsiwaEventType.fromString('yearly_zikir'),
+          TsiwaEventType.yearlyZikir);
+      expect(TsiwaEventType.fromString('zikir'),
+          TsiwaEventType.yearlyZikir);
       expect(TsiwaEventType.fromString('feeding_day'),
-          TsiwaEventType.feedingDay);
+          TsiwaEventType.yearlyZikir);
       expect(TsiwaEventType.fromString('unknown'), TsiwaEventType.other);
     });
 
@@ -635,7 +641,7 @@ void main() {
 
   group('AppNotification', () {
     test('NotificationType displayName returns Amharic', () {
-      expect(NotificationType.announcement.displayName, 'ማስታወቂያ');
+      expect(NotificationType.announcement.displayName, 'ማሳሰቢያ / መልእክት');
       expect(NotificationType.event.displayName, 'ክስተት');
       expect(NotificationType.payment.displayName, 'ክፍያ');
       expect(NotificationType.system.displayName, 'ስርዓት');

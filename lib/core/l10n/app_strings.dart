@@ -6,12 +6,15 @@ class S {
 
   // ── Common ──
   static String get appName => _am ? 'ጽዋ ማህበር' : 'Tsiwa Mahber';
-  static String get appSubtitle => _am ? 'ጽዋ ማህበር አስተዳደር' : 'Tsiwa Mahber Management';
+  static String get appSubtitle =>
+      _am ? 'ጽዋ ማህበር አስተዳደር' : 'Tsiwa Mahber Management';
   static String get loading => _am ? 'በመጫን ላይ...' : 'Loading...';
-  static String get preparingData => _am ? 'መረጃ በመዘጋጀት ላይ...' : 'Preparing data...';
+  static String get preparingData =>
+      _am ? 'መረጃ በመዘጋጀት ላይ...' : 'Preparing data...';
   static String get error => _am ? 'ስህተት' : 'Error';
   static String errorMsg(String e) => _am ? 'ስህተት: $e' : 'Error: $e';
-  static String get dataLoadFailed => _am ? 'መረጃ ማግኘት አልተቻለም' : 'Failed to load data';
+  static String get dataLoadFailed =>
+      _am ? 'መረጃ ማግኘት አልተቻለም' : 'Failed to load data';
   static String get saveFailed => _am ? 'ማስቀመጥ አልተቻለም' : 'Failed to save';
   static String get deleteFailed => _am ? 'መሰረዝ አልተቻለም' : 'Failed to delete';
   static String get save => _am ? 'አስቀምጥ' : 'Save';
@@ -46,14 +49,22 @@ class S {
   static String get register => _am ? 'ይመዝገቡ' : 'Register';
   static String get signOut => _am ? 'ውጣ ከአካውንት' : 'Sign Out';
   static String get forgotPassword => _am ? 'ይለፍ ቃል ረሱ?' : 'Forgot password?';
-  static String get noAccount => _am ? 'አካውንት የለዎትም?' : "Don't have an account?";
+  static String get noAccount =>
+      _am ? 'አካውንት የለዎትም?' : "Don't have an account?";
   static String get emailRequired => _am ? 'ኢሜይል ያስፈልጋል' : 'Email is required';
-  static String get validEmail => _am ? 'ትክክለኛ ኢሜይል ያስገቡ' : 'Enter a valid email';
-  static String get passwordRequired => _am ? 'ይለፍ ቃል ያስፈልጋል' : 'Password is required';
-  static String get resetEmailSent => _am ? 'ይለፍ ቃል ማስቀየሪያ ወደ ኢሜይልዎ ተልኳል' : 'Password reset email sent';
-  static String get enterEmailForReset => _am ? 'ኢሜይል ያስገቡ ከዚያ "ይለፍ ቃል ረሱ?" ይጫኑ' : 'Enter your email then tap "Forgot password?"';
-  static String get accountBlocked => _am ? 'አካውንትዎ ታግዷል' : 'Your account is blocked';
-  static String get contactAdmin => _am ? 'አስተዳዳሪን ያነጋግሩ' : 'Contact administrator';
+  static String get validEmail =>
+      _am ? 'ትክክለኛ ኢሜይል ያስገቡ' : 'Enter a valid email';
+  static String get passwordRequired =>
+      _am ? 'ይለፍ ቃል ያስፈልጋል' : 'Password is required';
+  static String get resetEmailSent =>
+      _am ? 'ይለፍ ቃል ማስቀየሪያ ወደ ኢሜይልዎ ተልኳል' : 'Password reset email sent';
+  static String get enterEmailForReset => _am
+      ? 'ኢሜይል ያስገቡ ከዚያ "ይለፍ ቃል ረሱ?" ይጫኑ'
+      : 'Enter your email then tap "Forgot password?"';
+  static String get accountBlocked =>
+      _am ? 'አካውንትዎ ታግዷል' : 'Your account is blocked';
+  static String get contactAdmin =>
+      _am ? 'አስተዳዳሪን ያነጋግሩ' : 'Contact administrator';
   static String get loadingUser => _am ? 'ተጠቃሚ በመጫን ላይ...' : 'Loading user...';
   static String get exitAccount => _am ? 'ውጣ' : 'Sign Out';
 
@@ -61,9 +72,12 @@ class S {
   static String get fullName => _am ? 'ሙሉ ስም' : 'Full Name';
   static String get nameRequired => _am ? 'ስም ያስፈልጋል' : 'Name is required';
   static String get fullNameRequired => _am ? 'ሙሉ ስም ያስገቡ' : 'Enter full name';
-  static String get confirmPassword => _am ? 'ይለፍ ቃል ያረጋግጡ' : 'Confirm password';
-  static String get passwordsNoMatch => _am ? 'ይለፍ ቃል አይመሳሰልም' : 'Passwords do not match';
-  static String get haveAccount => _am ? 'አካውንት አለዎት?' : 'Already have an account?';
+  static String get confirmPassword =>
+      _am ? 'ይለፍ ቃል ያረጋግጡ' : 'Confirm password';
+  static String get passwordsNoMatch =>
+      _am ? 'ይለፍ ቃል አይመሳሰልም' : 'Passwords do not match';
+  static String get haveAccount =>
+      _am ? 'አካውንት አለዎት?' : 'Already have an account?';
 
   // ── Popup Menu ──
   static String get lightTheme => _am ? 'ብሩህ ገጽታ' : 'Light Theme';
@@ -76,31 +90,39 @@ class S {
   static String get newArea => _am ? 'አዲስ አካባቢ' : 'New Area';
   static String get shortName => _am ? 'አጭር ስም' : 'Short Name';
   static String get address => _am ? 'አድራሻ' : 'Address';
-  static String get nameAndShortRequired => _am ? 'ስም እና አጭር ስም ያስፈልጋል' : 'Name and short name are required';
+  static String get nameAndShortRequired =>
+      _am ? 'ስም እና አጭር ስም ያስፈልጋል' : 'Name and short name are required';
 
   // ── Area Home ──
-  static String get notifications => _am ? 'ማሳወቂያዎች' : 'Notifications';
+  static String get notifications => _am ? 'ማሳሰቢያዎች' : 'Notifications';
   static String get users => _am ? 'ተጠቃሚዎች' : 'Users';
   static String get profile => _am ? 'መገለጫ' : 'Profile';
   static String get tsiwaGroups => _am ? 'ፅዋ ማህበሮች' : 'Tsiwa Groups';
-  static String get manageTsiwaGroups => _am ? 'ፅዋ ማህበሮችን ያስተዳድሩ' : 'Manage Tsiwa groups';
+  static String get manageTsiwaGroups =>
+      _am ? 'ፅዋ ማህበሮችን ያስተዳድሩ' : 'Manage Tsiwa groups';
   static String get leaders => _am ? 'አመራሮች' : 'Leaders';
   static String get manageLeaders => _am ? 'አመራሮችን ያስተዳድሩ' : 'Manage leaders';
   static String get edir => _am ? 'እድር' : 'Edir';
   static String get manageEdir => _am ? 'እድርን ያስተዳድሩ' : 'Manage Edir';
-  static String get announcements => _am ? 'ማስታወቂያዎች' : 'Announcements';
-  static String get viewAnnouncements => _am ? 'ማስታወቂያዎችን ያየ' : 'View announcements';
+  static String get announcements => _am ? 'ማሳሰቢያዎች / መልእክቶች' : 'Announcements';
+  static String get viewAnnouncements =>
+      _am ? 'ማሳሰቢያዎች / መልእክቶች ያየ' : 'View announcements';
   static String get telegram => _am ? 'ቴሌግራም' : 'Telegram';
-  static String get telegramBot => _am ? 'ቴሌግራም ባት ማገናኛ' : 'Telegram bot connection';
+  static String get telegramBot =>
+      _am ? 'ቴሌግራም ባት ማገናኛ' : 'Telegram bot connection';
   static String get csvExportMenu => _am ? 'CSV ላክ' : 'CSV Export';
-  static String get csvExportSub => _am ? 'መረጃ ወደ CSV ፋይል ላክ' : 'Export data to CSV';
+  static String get csvExportSub =>
+      _am ? 'መረጃ ወደ CSV ፋይል ላክ' : 'Export data to CSV';
   static String get csvImportMenu => _am ? 'CSV አስገባ' : 'CSV Import';
-  static String get csvImportSub => _am ? 'CSV ፋይል ወደ ውስጥ አስገባ' : 'Import CSV file';
+  static String get csvImportSub =>
+      _am ? 'CSV ፋይል ወደ ውስጥ አስገባ' : 'Import CSV file';
   static String get reports => _am ? 'ሪፖርቶች' : 'Reports';
-  static String get reportsAndAnalytics => _am ? 'ሪፖርቶች እና ትንታኔ' : 'Reports & Analytics';
+  static String get reportsAndAnalytics =>
+      _am ? 'ሪፖርቶች እና ትንታኔ' : 'Reports & Analytics';
   static String get developers => _am ? 'ገንቢዎች' : 'Developers';
-  static String get developerManagement => _am ? 'ገንቢ አስተዳደር' : 'Developer management';
-  static String get announcement => _am ? 'ማስታወቂያ' : 'Announcement';
+  static String get developerManagement =>
+      _am ? 'ገንቢ አስተዳደር' : 'Developer management';
+  static String get announcement => _am ? 'ማሳሰቢያ / መልእክት' : 'Announcement';
 
   // ── User Roles ──
   static String get roleDeveloper => _am ? 'ገንቢ' : 'Developer';
@@ -124,12 +146,16 @@ class S {
   static String get edirTreasurer => _am ? 'ግምጃ ቤት' : 'Treasurer';
 
   // ── Leader screens ──
-  static String get noLeadersYet => _am ? 'እስካሁን አመራር አልተመዘገበም።' : 'No leaders registered yet.';
-  static String get addLeaderHint => _am ? 'አዲስ አመራር ለመጨመር ከታች ያለውን ቁልፍ ይጫኑ' : 'Tap the button below to add a new leader';
+  static String get noLeadersYet =>
+      _am ? 'እስካሁን አመራር አልተመዘገበም።' : 'No leaders registered yet.';
+  static String get addLeaderHint => _am
+      ? 'አዲስ አመራር ለመጨመር ከታች ያለውን ቁልፍ ይጫኑ'
+      : 'Tap the button below to add a new leader';
   static String get newLeader => _am ? 'አዲስ አመራር' : 'New Leader';
   static String get editLeader => _am ? 'አመራር አርትዕ' : 'Edit Leader';
   static String get deleteLeader => _am ? 'አመራር ሰርዝ' : 'Delete Leader';
-  static String get deleteLeaderFailed => _am ? 'አመራሩን መሰረዝ አልተቻለም።' : 'Failed to delete leader.';
+  static String get deleteLeaderFailed =>
+      _am ? 'አመራሩን መሰረዝ አልተቻለም።' : 'Failed to delete leader.';
   static String get ownerSection => _am ? 'ባለቤት' : 'Owner';
   static String get leaderSection => _am ? 'አመራሮች' : 'Leaders';
   static String get advisorSection => _am ? 'መማክርት' : 'Advisors';
@@ -140,18 +166,23 @@ class S {
   static String get phoneNumber => _am ? 'ስልክ ቁጥር' : 'Phone Number';
   static String get additionalPhone => _am ? 'ተጨማሪ ስልክ' : 'Additional Phone';
   static String get edirRole => _am ? 'የእድር ሚና' : 'Edir Role';
-  static String get assignedTsiwas => _am ? 'የተመደበባቸው ፅዋ ማህበሮች' : 'Assigned Tsiwa Groups';
+  static String get assignedTsiwas =>
+      _am ? 'የተመደበባቸው ፅዋ ማህበሮች' : 'Assigned Tsiwa Groups';
   static String get isActive => _am ? 'ንቁ' : 'Active';
   static String get leaderIsActive => _am ? 'አመራሩ ንቁ ነው' : 'Leader is active';
   static String get stopped => _am ? 'ቆሟል' : 'Stopped';
 
   // ── Tsiwa screens ──
-  static String get noTsiwaYet => _am ? 'እስካሁን ፅዋ ማህበር አልተመዘገበም።' : 'No Tsiwa group registered yet.';
-  static String get addTsiwaHint => _am ? 'አዲስ ፅዋ ማህበር ለመጨመር ከታች ያለውን ቁልፍ ይጫኑ' : 'Tap the button below to add a new Tsiwa';
+  static String get noTsiwaYet =>
+      _am ? 'እስካሁን ፅዋ ማህበር አልተመዘገበም።' : 'No Tsiwa group registered yet.';
+  static String get addTsiwaHint => _am
+      ? 'አዲስ ፅዋ ማህበር ለመጨመር ከታች ያለውን ቁልፍ ይጫኑ'
+      : 'Tap the button below to add a new Tsiwa';
   static String get newTsiwa => _am ? 'አዲስ ፅዋ' : 'New Tsiwa';
   static String get editTsiwa => _am ? 'ፅዋ አርትዕ' : 'Edit Tsiwa';
   static String get tsiwaDetail => _am ? 'ፅዋ ዝርዝር' : 'Tsiwa Detail';
-  static String get tsiwaNotFound => _am ? 'ፅዋ ማህበሩ አልተገኘም' : 'Tsiwa group not found';
+  static String get tsiwaNotFound =>
+      _am ? 'ፅዋ ማህበሩ አልተገኘም' : 'Tsiwa group not found';
   static String get deleteTsiwa => _am ? 'ፅዋ ሰርዝ' : 'Delete Tsiwa';
   static String get basicInfo => _am ? 'መሰረታዊ መረጃ' : 'Basic Info';
   static String get tsiwaName => _am ? 'ፅዋ ስም *' : 'Tsiwa Name *';
@@ -159,51 +190,81 @@ class S {
   static String get churchName => _am ? 'የቤተ ክርስቲያን ስም' : 'Church Name';
   static String get saintName => _am ? 'የቅዱስ/ቅድስት ስም' : 'Saint Name';
   static String get location => _am ? 'ቦታ' : 'Location';
-  static String get monthlyTsiwaDay => _am ? 'የወርሃዊ ፅዋ ቀን' : 'Monthly Tsiwa Day';
+  static String get monthlyTsiwaDay =>
+      _am ? 'የወርሃዊ ፅዋ ቀን' : 'Monthly Tsiwa Day';
   static String get day => _am ? 'ቀን' : 'Day';
   static String get dayRange => _am ? 'ቀን (1-30) *' : 'Day (1-30) *';
-  static String get enterDay => _am ? 'የወርሃዊ ፅዋ ቀን ያስገቡ' : 'Enter monthly Tsiwa day';
-  static String get dayMustBe1to30 => _am ? 'ቀን ከ1 እስከ 30 መሆን አለበት' : 'Day must be between 1 and 30';
+  static String get enterDay =>
+      _am ? 'የወርሃዊ ፅዋ ቀን ያስገቡ' : 'Enter monthly Tsiwa day';
+  static String get dayMustBe1to30 =>
+      _am ? 'ቀን ከ1 እስከ 30 መሆን አለበት' : 'Day must be between 1 and 30';
   static String get zikirDay => _am ? 'የዝክር ቀን' : 'Memorial Day';
   static String get title => _am ? 'ርዕስ' : 'Title';
-  static String get monthRange => _am ? 'ወር (1-13)' : 'Month (1-13)';
+  static String get monthRange => _am ? 'ወር (1-12)' : 'Month (1-12)';
   static String get dayRange2 => _am ? 'ቀን (1-30)' : 'Day (1-30)';
   static String get feedingDay => _am ? 'ነድያንን የማብላት ቀን' : 'Feeding Day';
   static String get archive => _am ? 'ማህደር' : 'Archive';
-  static String get tsiwaIsActive => _am ? 'ፅዋው በንቁ ሁኔታ ላይ ነው' : 'Tsiwa is active';
-  static String get archiveTsiwa => _am ? 'ፅዋውን ወደ ማህደር ያስገቡ' : 'Archive this Tsiwa';
-  static String get zikirFeedingSection => _am ? 'ዝክር / ማብላት' : 'Memorial / Feeding';
-  static String get noZikirOrFeeding => _am ? 'እስካሁን የዝክር ወይም የማብላት ቀን አልተመዘገበም' : 'No memorial or feeding day registered yet';
+  static String get tsiwaIsActive =>
+      _am ? 'ፅዋው በንቁ ሁኔታ ላይ ነው' : 'Tsiwa is active';
+  static String get archiveTsiwa =>
+      _am ? 'ፅዋውን ወደ ማህደር ያስገቡ' : 'Archive this Tsiwa';
+  static String get yearlyZikirTitle =>
+      _am ? 'የዓመታዊ በዓል ዝክር' : 'Yearly Holiday Memorial';
+  static String get addYearlyZikir =>
+      _am ? 'የዓመታዊ በዓል ዝክር ጨምር' : 'Add Yearly Holiday Memorial';
+  static String get noYearlyZikirYet => _am
+      ? 'እስካሁን የዓመታዊ በዓል ዝክር አልተመዘገበም'
+      : 'No yearly holiday memorial registered yet';
+  static String get month => _am ? 'ወር' : 'Month';
+  static String get zikirFeedingSection =>
+      _am ? 'ዝክር / ማብላት' : 'Memorial / Feeding';
+  static String get noZikirOrFeeding => _am
+      ? 'እስካሁን የዝክር ወይም የማብላት ቀን አልተመዘገበም'
+      : 'No memorial or feeding day registered yet';
   static String get members => _am ? 'አባላት' : 'Members';
   static String get calendar => _am ? 'የቀን መርሐ ግብር' : 'Calendar';
-  static String get rotationAndHistory => _am ? 'የፅዋ ተራ እና ታሪክ' : 'Rotation & History';
-  static String get rotationOrder => _am ? 'ተራ ቅደም ተከተል እና የክንውን ታሪክ' : 'Rotation order and event history';
+  static String get rotationAndHistory =>
+      _am ? 'የፅዋ ተራ እና ታሪክ' : 'Rotation & History';
+  static String get rotationOrder =>
+      _am ? 'ተራ ቅደም ተከተል እና የክንውን ታሪክ' : 'Rotation order and event history';
   static String tsiwaDay(int day) => _am ? 'ፅዋ ቀን $day' : 'Tsiwa Day $day';
-  static String get monthMustBe1to13 => _am ? 'ወር ከ1 እስከ 13 መሆን አለበት' : 'Month must be between 1 and 13';
+  static String get monthMustBe1to13 =>
+      _am ? 'ወር ከ1 እስከ 12 መሆን አለበት' : 'Month must be between 1 and 12';
   static String get enterDayVal => _am ? 'ቀን ያስገቡ' : 'Enter day';
   static String get enterMonthVal => _am ? 'ወር ያስገቡ' : 'Enter month';
-  static String get dataDeleteFailed => _am ? 'መረጃውን መሰረዝ አልተቻለም።' : 'Failed to delete data.';
-  static String get dataSaveFailed => _am ? 'መረጃውን ማስቀመጥ አልተቻለም።' : 'Failed to save data.';
+  static String get dataDeleteFailed =>
+      _am ? 'መረጃውን መሰረዝ አልተቻለም።' : 'Failed to delete data.';
+  static String get dataSaveFailed =>
+      _am ? 'መረጃውን ማስቀመጥ አልተቻለም።' : 'Failed to save data.';
 
   // ── Rotation screen ──
   static String get rotation => _am ? 'የፅዋ ተራ' : 'Tsiwa Rotation';
   static String get rotationOrderTab => _am ? 'ተራ ቅደም ተከተል' : 'Rotation Order';
   static String get eventHistory => _am ? 'የክንውን ታሪክ' : 'Event History';
-  static String get noMembersInRotation => _am ? 'በተራ ውስጥ ያለ አባል የለም' : 'No members in rotation';
-  static String get membersMustBeInRotation => _am ? 'አባላት ተመዝግበው በተራ ውስጥ መሆን አለባቸው' : 'Members must be registered and in rotation';
+  static String get noMembersInRotation =>
+      _am ? 'በተራ ውስጥ ያለ ማህበርተኛ የለም' : 'No members in rotation';
+  static String get membersMustBeInRotation => _am
+      ? 'ማህበርተኞች ተመዝግበው በተራ ውስጥ መሆን አለባቸው'
+      : 'Members must be registered and in rotation';
   static String get currentTurn => _am ? 'አሁን ተራ' : 'Current Turn';
   static String get nextTurn => _am ? 'ቀጣይ ተራ' : 'Next Turn';
   static String get next => _am ? 'ቀጣይ' : 'Next';
-  static String get rotationUpdateFailed => _am ? 'ተራውን ማዘመን አልተቻለም' : 'Failed to update rotation';
-  static String get noEventsYet => _am ? 'እስካሁን ክንውን አልተመዘገበም' : 'No events recorded yet';
-  static String get addEventHint => _am ? 'ክንውን ለመመዝገብ ከታች ያለውን ቁልፍ ይጫኑ' : 'Tap button below to record an event';
+  static String get rotationUpdateFailed =>
+      _am ? 'ተራውን ማዘመን አልተቻለም' : 'Failed to update rotation';
+  static String get noEventsYet =>
+      _am ? 'እስካሁን ክንውን አልተመዘገበም' : 'No events recorded yet';
+  static String get addEventHint => _am
+      ? 'ክንውን ለመመዝገብ ከታች ያለውን ቁልፍ ይጫኑ'
+      : 'Tap button below to record an event';
   static String get recordEvent => _am ? 'ክንውን መዝግብ' : 'Record Event';
-  static String get eventRecordFailed => _am ? 'ክንውን መመዝገብ አልተቻለም' : 'Failed to record event';
-  static String get statusUpdateFailed => _am ? 'ሁኔታውን ማዘመን አልተቻለም' : 'Failed to update status';
+  static String get eventRecordFailed =>
+      _am ? 'ክንውን መመዝገብ አልተቻለም' : 'Failed to record event';
+  static String get statusUpdateFailed =>
+      _am ? 'ሁኔታውን ማዘመን አልተቻለም' : 'Failed to update status';
   static String get completed => _am ? 'ተፈጸመ' : 'Completed';
   static String get cancelled => _am ? 'ተሰረዘ' : 'Cancelled';
   static String get type => _am ? 'ዓይነት' : 'Type';
-  static String get responsibleMember => _am ? 'ኃላፊ አባል' : 'Responsible Member';
+  static String get responsibleMember => _am ? 'ኃላፊ ማህበርተኛ' : 'Responsible Member';
 
   // ── Tsiwa Event Types ──
   static String get monthlyTsiwa => _am ? 'የወርሃዊ ፅዋ' : 'Monthly Tsiwa';
@@ -215,38 +276,54 @@ class S {
   static String get eventCancelled => _am ? 'የተሰረዘ' : 'Cancelled';
 
   // ── Edir screens ──
-  static String get noEdirYet => _am ? 'እስካሁን እድር አልተመዘገበም።' : 'No Edir registered yet.';
-  static String get addEdirHint => _am ? 'አዲስ እድር ለመጨመር ከታች ያለውን ቁልፍ ይጫኑ' : 'Tap the button below to add a new Edir';
+  static String get noEdirYet =>
+      _am ? 'እስካሁን እድር አልተመዘገበም።' : 'No Edir registered yet.';
+  static String get addEdirHint => _am
+      ? 'አዲስ እድር ለመጨመር ከታች ያለውን ቁልፍ ይጫኑ'
+      : 'Tap the button below to add a new Edir';
   static String get newEdir => _am ? 'አዲስ እድር' : 'New Edir';
   static String get editEdir => _am ? 'እድር አስተካክል' : 'Edit Edir';
   static String get deleteEdir => _am ? 'እድር ሰርዝ' : 'Delete Edir';
   static String get edirNotFound => _am ? 'እድር አልተገኘም' : 'Edir not found';
   static String get edirName => _am ? 'የእድሩ ስም' : 'Edir name';
-  static String get aboutEdir => _am ? 'ስለ እድሩ አጭር መግለጫ' : 'Brief description about the Edir';
-  static String get monthlyContribution => _am ? 'ወርሃዊ መዋጮ (ብር) *' : 'Monthly Contribution (Birr) *';
-  static String get monthlyContribRequired => _am ? 'ወርሃዊ መዋጮ ያስፈልጋል' : 'Monthly contribution is required';
-  static String get validAmountRequired => _am ? 'ትክክለኛ መጠን ያስገቡ' : 'Enter a valid amount';
-  static String get penaltyAmount => _am ? 'የቅጣት መጠን (ብር)' : 'Penalty Amount (Birr)';
+  static String get aboutEdir =>
+      _am ? 'ስለ እድሩ አጭር መግለጫ' : 'Brief description about the Edir';
+  static String get monthlyContribution =>
+      _am ? 'ወርሃዊ መዋጮ (ብር) *' : 'Monthly Contribution (Birr) *';
+  static String get monthlyContribRequired =>
+      _am ? 'ወርሃዊ መዋጮ ያስፈልጋል' : 'Monthly contribution is required';
+  static String get validAmountRequired =>
+      _am ? 'ትክክለኛ መጠን ያስገቡ' : 'Enter a valid amount';
+  static String get penaltyAmount =>
+      _am ? 'የቅጣት መጠን (ብር)' : 'Penalty Amount (Birr)';
   static String get paymentDay => _am ? 'የክፍያ ቀን (1-30)' : 'Payment Day (1-30)';
   static String get payments => _am ? 'ክፍያዎች' : 'Payments';
-  static String get paymentReport => _am ? 'ክፍያ ሪፖርት ይመልከቱ' : 'View payment report';
+  static String get paymentReport =>
+      _am ? 'ክፍያ ሪፖርት ይመልከቱ' : 'View payment report';
   static String get monthlyDue => _am ? 'ወርሃዊ መዋጮ' : 'Monthly Due';
   static String get penalty => _am ? 'ቅጣት' : 'Penalty';
   static String paymentDayOf(int d) => _am ? 'በወር $d' : 'Day $d of month';
   static String get treasury => _am ? 'ግምጃ ቤት' : 'Treasury';
-  static String treasuryBirr(String v) => _am ? 'ግምጃ ቤት: $v ብር' : 'Treasury: $v Birr';
-  static String get treasuryBirrLabel => _am ? 'ግምጃ ቤት (ብር)' : 'Treasury (Birr)';
+  static String treasuryBirr(String v) =>
+      _am ? 'ግምጃ ቤት: $v ብር' : 'Treasury: $v Birr';
+  static String get treasuryBirrLabel =>
+      _am ? 'ግምጃ ቤት (ብር)' : 'Treasury (Birr)';
 
   // ── Edir Members ──
-  static String get noMembersYet => _am ? 'እስካሁን አባል አልተመዘገበም።' : 'No members registered yet.';
-  static String get addMemberHint => _am ? 'አዲስ አባል ለመጨመር ከታች ያለውን ቁልፍ ይጫኑ' : 'Tap the button below to add a new member';
+  static String get noMembersYet =>
+      _am ? 'እስካሁን አባል አልተመዘገበም።' : 'No members registered yet.';
+  static String get addMemberHint => _am
+      ? 'አዲስ አባል ለመጨመር ከታች ያለውን ቁልፍ ይጫኑ'
+      : 'Tap the button below to add a new member';
   static String get newMember => _am ? 'አዲስ አባል' : 'New Member';
   static String get editMember => _am ? 'አባል አስተካክል' : 'Edit Member';
   static String get deleteMember => _am ? 'አባል ሰርዝ' : 'Delete Member';
   static String get memberFullName => _am ? 'የአባሉ ሙሉ ስም' : "Member's full name";
-  static String get memberChristianName => _am ? 'የአባሉ የክርስትና ስም' : "Member's Christian name";
+  static String get memberChristianName =>
+      _am ? 'የአባሉ የክርስትና ስም' : "Member's Christian name";
   static String paidAmount(String v) => _am ? 'ከፍሏል: $v ብር' : 'Paid: $v Birr';
-  static String balanceDue(String v) => _am ? 'ቀሪ ዕዳ: $v ብር' : 'Balance: $v Birr';
+  static String balanceDue(String v) =>
+      _am ? 'ቀሪ ዕዳ: $v ብር' : 'Balance: $v Birr';
   static String get recordPayment => _am ? 'ክፍያ መዝግብ' : 'Record Payment';
 
   // ── Record Payment ──
@@ -269,40 +346,57 @@ class S {
   static String get statusSuspended => _am ? 'የታገደ' : 'Suspended';
 
   // ── Edir Payment List ──
-  static String get noPaymentsYet => _am ? 'እስካሁን ክፍያ አልተመዘገበም።' : 'No payments recorded yet.';
-  static String get paymentFromMemberList => _am ? 'ከአባላት ዝርዝር ክፍያ ማስመዝገብ ይችላሉ' : 'You can record payments from the member list';
+  static String get noPaymentsYet =>
+      _am ? 'እስካሁን ክፍያ አልተመዘገበም።' : 'No payments recorded yet.';
+  static String get paymentFromMemberList => _am
+      ? 'ከአባላት ዝርዝር ክፍያ ማስመዝገብ ይችላሉ'
+      : 'You can record payments from the member list';
 
   // ── Notifications ──
-  static String get notificationTitle => _am ? 'ማሳወቂያዎች' : 'Notifications';
-  static String get markAllRead => _am ? 'ሁሉንም እንደተነበበ ምልክት አድርግ' : 'Mark all as read';
+  static String get notificationTitle => _am ? 'ማሳሰቢያዎች' : 'Notifications';
+  static String get markAllRead =>
+      _am ? 'ሁሉንም እንደተነበበ ምልክት አድርግ' : 'Mark all as read';
   static String get clearAll => _am ? 'ሁሉንም አጽዳ' : 'Clear all';
-  static String get noNotifications => _am ? 'ምንም ማሳወቂያ የለም' : 'No notifications';
-  static String get clearAllConfirm => _am ? 'ሁሉንም ማሳወቂያዎች አጽዳ' : 'Clear all notifications';
-  static String get clearAllConfirmMsg => _am ? 'ሁሉንም ማሳወቂያዎች ለመሰረዝ እርግጠኛ ነዎት?' : 'Are you sure you want to clear all notifications?';
+  static String get noNotifications =>
+      _am ? 'ምንም ማሳሰቢያ የለም' : 'No notifications';
+  static String get clearAllConfirm =>
+      _am ? 'ሁሉንም ማሳሰቢያዎች አጽዳ' : 'Clear all notifications';
+  static String get clearAllConfirmMsg => _am
+      ? 'ሁሉንም ማሳሰቢያዎች ለመሰረዝ እርግጠኛ ነዎት?'
+      : 'Are you sure you want to clear all notifications?';
   static String get clear => _am ? 'አጽዳ' : 'Clear';
 
   // ── Notification Types ──
-  static String get notifAnnouncement => _am ? 'ማስታወቂያ' : 'Announcement';
+  static String get notifAnnouncement => _am ? 'ማሳሰቢያ / መልእክት' : 'Announcement';
   static String get notifEvent => _am ? 'ክስተት' : 'Event';
   static String get notifPayment => _am ? 'ክፍያ' : 'Payment';
   static String get notifSystem => _am ? 'ስርዓት' : 'System';
 
   // ── Announcements ──
-  static String get noAnnouncementsYet => _am ? 'እስካሁን ማስታወቂያ የለም።' : 'No announcements yet.';
-  static String get addAnnouncementHint => _am ? 'አዲስ ማስታወቂያ ለመጨመር ከታች ያለውን ቁልፍ ይጫኑ' : 'Tap the button below to add an announcement';
-  static String get newAnnouncement => _am ? 'አዲስ ማስታወቂያ' : 'New Announcement';
-  static String get editAnnouncement => _am ? 'ማስታወቂያ አስተካክል' : 'Edit Announcement';
-  static String get deleteAnnouncement => _am ? 'ማስታወቂያ ሰርዝ' : 'Delete Announcement';
-  static String get announcementDeleted => _am ? 'ማስታወቂያ ተሰርዟል' : 'Announcement deleted';
-  static String get announcementNotFound => _am ? 'ማስታወቂያ አልተገኘም' : 'Announcement not found';
+  static String get noAnnouncementsYet =>
+      _am ? 'እስካሁን ማሳሰቢያ / መልእክት የለም።' : 'No announcements yet.';
+  static String get addAnnouncementHint => _am
+      ? 'አዲስ ማሳሰቢያ / መልእክት ለመጨመር ከታች ያለውን ቁልፍ ይጫኑ'
+      : 'Tap the button below to add an announcement';
+  static String get newAnnouncement => _am ? 'አዲስ ማሳሰቢያ / መልእክት' : 'New Announcement';
+  static String get editAnnouncement =>
+      _am ? 'ማሳሰቢያ / መልእክት አስተካክል' : 'Edit Announcement';
+  static String get deleteAnnouncement =>
+      _am ? 'ማሳሰቢያ / መልእክት ሰርዝ' : 'Delete Announcement';
+  static String get announcementDeleted =>
+      _am ? 'ማሳሰቢያ / መልእክት ተሰርዟል' : 'Announcement deleted';
+  static String get announcementNotFound =>
+      _am ? 'ማሳሰቢያ / መልእክት አልተገኘም' : 'Announcement not found';
   static String get titleRequired => _am ? 'ርዕስ ያስፈልጋል' : 'Title is required';
-  static String get detailRequired => _am ? 'ዝርዝር ያስፈልጋል' : 'Detail is required';
+  static String get detailRequired =>
+      _am ? 'ዝርዝር ያስፈልጋል' : 'Detail is required';
   static String get detail => _am ? 'ዝርዝር *' : 'Detail *';
   static String get level => _am ? 'ደረጃ' : 'Level';
   static String get iHaveRead => _am ? 'አንብቤአለሁ' : 'I have read';
   static String get markAsRead => _am ? 'አንብቤአለሁ ምልክት አድርግ' : 'Mark as read';
   static String get readBy => _am ? 'ያነበቡ ሰዎች' : 'Read by';
-  static String get noOneReadYet => _am ? 'እስካሁን ማንም አላነበበም' : 'No one has read yet';
+  static String get noOneReadYet =>
+      _am ? 'እስካሁን ማንም አላነበበም' : 'No one has read yet';
 
   // ── Announcement Levels ──
   static String get levelNormal => _am ? 'መደበኛ' : 'Normal';
@@ -310,16 +404,24 @@ class S {
   static String get levelUrgent => _am ? 'አስቸኳይ' : 'Urgent';
 
   // ── Telegram ──
-  static String get telegramConnection => _am ? 'ቴሌግራም ማገናኛ' : 'Telegram Connection';
+  static String get telegramConnection =>
+      _am ? 'ቴሌግራም ማገናኛ' : 'Telegram Connection';
   static String get telegramBotTitle => _am ? 'ቴሌግራም ቦት' : 'Telegram Bot';
-  static String get telegramDesc => _am ? 'ማስታወቂያዎችን ወደ ቴሌግራም ግሩፕ ያስተላልፉ' : 'Send announcements to Telegram group';
+  static String get telegramDesc => _am
+      ? 'ማሳሰቢያዎች / መልእክቶችን ወደ ቴሌግራም ግሩፕ ያስተላልፉ'
+      : 'Send announcements to Telegram group';
   static String get botSettings => _am ? 'ቦት ማስተካከያ' : 'Bot Settings';
-  static String get botCreateHint => _am ? 'ቦት ለመፍጠር @BotFather ን በቴሌግራም ያግኙ' : 'Use @BotFather on Telegram to create a bot';
+  static String get botCreateHint => _am
+      ? 'ቦት ለመፍጠር @BotFather ን በቴሌግራም ያግኙ'
+      : 'Use @BotFather on Telegram to create a bot';
   static String get testConnection => _am ? 'ግንኙነት ፈትሽ' : 'Test Connection';
   static String get notifTypes => _am ? 'ማሳወቂያ ዓይነቶች' : 'Notification Types';
-  static String get sendAnnouncements => _am ? 'አዲስ ማስታወቂያ ሲፈጠር ወደ ቴሌግራም ላክ' : 'Send new announcements to Telegram';
+  static String get sendAnnouncements => _am
+      ? 'አዲስ ማሳሰቢያ / መልእክት ሲፈጠር ወደ ቴሌግራም ላክ'
+      : 'Send new announcements to Telegram';
   static String get events => _am ? 'ክስተቶች' : 'Events';
-  static String get sendEvents => _am ? 'የክስተት ማስታወሻ ወደ ቴሌግራም ላክ' : 'Send event reminders to Telegram';
+  static String get sendEvents =>
+      _am ? 'የክስተት ማስታወሻ ወደ ቴሌግራም ላክ' : 'Send event reminders to Telegram';
   static String connectionSuccess(bool ok) => ok
       ? (_am ? 'ግንኙነት ተሳክቷል!' : 'Connection successful!')
       : (_am ? 'ግንኙነት አልተሳካም' : 'Connection failed');
@@ -330,26 +432,38 @@ class S {
   // ── Developer Management ──
   static String get addDeveloper => _am ? 'አዲስ ገንቢ ጨምር' : 'Add New Developer';
   static String get developerList => _am ? 'ገንቢዎች ዝርዝር' : 'Developer List';
-  static String get noDevelopers => _am ? 'ምንም ገንቢ አልተመዘገበም' : 'No developers registered';
+  static String get noDevelopers =>
+      _am ? 'ምንም ገንቢ አልተመዘገበም' : 'No developers registered';
   static String get deleteDeveloper => _am ? 'ገንቢ ሰርዝ' : 'Delete Developer';
   static String get devDeleteFailed => _am ? 'መሰረዝ አልተቻለም' : 'Failed to delete';
 
   // ── CSV ──
-  static String get selectDataType => _am ? 'የመረጃ ዓይነት ይምረጡ' : 'Select data type';
-  static String get csvExportDesc => _am ? 'መረጃውን CSV ፋይል አድርገው ያውርዱ ወይም ያጋሩ' : 'Download or share data as CSV file';
-  static String get loadingTsiwas => _am ? 'ፅዋ ማህበሮችን በመጫን ላይ...' : 'Loading Tsiwa groups...';
-  static String get noTsiwaRegistered => _am ? 'ምንም ፅዋ ማህበር አልተመዘገበም' : 'No Tsiwa groups registered';
+  static String get selectDataType =>
+      _am ? 'የመረጃ ዓይነት ይምረጡ' : 'Select data type';
+  static String get csvExportDesc => _am
+      ? 'መረጃውን CSV ፋይል አድርገው ያውርዱ ወይም ያጋሩ'
+      : 'Download or share data as CSV file';
+  static String get loadingTsiwas =>
+      _am ? 'ፅዋ ማህበሮችን በመጫን ላይ...' : 'Loading Tsiwa groups...';
+  static String get noTsiwaRegistered =>
+      _am ? 'ምንም ፅዋ ማህበር አልተመዘገበም' : 'No Tsiwa groups registered';
   static String get selectTsiwa => _am ? 'ፅዋ ማህበር ይምረጡ' : 'Select Tsiwa Group';
-  static String get loadingEdirs => _am ? 'እድሮችን በመጫን ላይ...' : 'Loading Edirs...';
-  static String get noEdirRegistered => _am ? 'ምንም እድር አልተመዘገበም' : 'No Edirs registered';
+  static String get loadingEdirs =>
+      _am ? 'እድሮችን በመጫን ላይ...' : 'Loading Edirs...';
+  static String get noEdirRegistered =>
+      _am ? 'ምንም እድር አልተመዘገበም' : 'No Edirs registered';
   static String get selectEdir => _am ? 'እድር ይምረጡ' : 'Select Edir';
   static String get exportCsv => _am ? 'CSV ላክ' : 'Export CSV';
   static String get exporting => _am ? 'በመላክ ላይ...' : 'Exporting...';
   static String get selectFile => _am ? 'CSV ፋይል ምረጥ' : 'Select CSV File';
-  static String get selectAnotherFile => _am ? 'ሌላ ፋይል ምረጥ' : 'Select Another File';
+  static String get selectAnotherFile =>
+      _am ? 'ሌላ ፋይል ምረጥ' : 'Select Another File';
   static String get importing => _am ? 'በማስገባት ላይ...' : 'Importing...';
   static String importCount(int n) => _am ? '$n መረጃ አስገባ' : 'Import $n items';
-  static String get fileReadFailed => _am ? 'ፋይሉን ማንበብ አልተቻለም' : 'Failed to read file';
+  static String get fileReadFailed =>
+      _am ? 'ፋይሉን ማንበብ አልተቻለም' : 'Failed to read file';
+  static String get fileNeedsHeaderAndData =>
+      _am ? 'ፋይሉ ራስ ጌና መረጃ ሊኖረው ይገባል' : 'File must have a header row and data';
   static String get importConfirm => _am ? 'ማረጋገጫ' : 'Confirmation';
   static String get importConfirmMsg => _am
       ? 'መረጃዎቹን ወደ ውስጥ ማስገባት ይፈልጋሉ?\nነባር መረጃዎች አይቀየሩም — አዲስ ብቻ ይጨመራሉ።'
@@ -362,25 +476,32 @@ class S {
   static String get edirMembers => _am ? 'የእድር አባላት' : 'Edir Members';
 
   // ── Reports ──
-  static String get loadingReports => _am ? 'ሪፖርቶችን በመጫን ላይ...' : 'Loading reports...';
+  static String get loadingReports =>
+      _am ? 'ሪፖርቶችን በመጫን ላይ...' : 'Loading reports...';
   static String get refresh => _am ? 'አድስ' : 'Refresh';
   static String get overallSummary => _am ? 'አጠቃላይ ማጠቃለያ' : 'Overall Summary';
   static String get inAllTsiwas => _am ? 'በሁሉም ፅዋ' : 'In all Tsiwas';
   static String get detailedReports => _am ? 'ዝርዝር ሪፖርቶች' : 'Detailed Reports';
   static String get tsiwaReport => _am ? 'የፅዋ ሪፖርት' : 'Tsiwa Report';
-  static String get tsiwaReportSub => _am ? 'የአባላት ብዛት፣ ሚና ስርጭት' : 'Member count, role distribution';
+  static String get tsiwaReportSub =>
+      _am ? 'የአባላት ብዛት፣ ሚና ስርጭት' : 'Member count, role distribution';
   static String get edirReport => _am ? 'የእድር ሪፖርት' : 'Edir Report';
-  static String get edirReportSub => _am ? 'የክፍያ ማጠቃለያ፣ ቀሪ ሂሳብ' : 'Payment summary, balance';
+  static String get edirReportSub =>
+      _am ? 'የክፍያ ማጠቃለያ፣ ቀሪ ሂሳብ' : 'Payment summary, balance';
   static String get noEdirData => _am ? 'ምንም እድር አልተመዘገበም' : 'No Edir data';
-  static String get noTsiwaData => _am ? 'ምንም ፅዋ ማህበር አልተመዘገበም' : 'No Tsiwa data';
-  static String get financialSummary => _am ? 'አጠቃላይ የገንዘብ ማጠቃለያ' : 'Overall Financial Summary';
+  static String get noTsiwaData =>
+      _am ? 'ምንም ፅዋ ማህበር አልተመዘገበም' : 'No Tsiwa data';
+  static String get financialSummary =>
+      _am ? 'አጠቃላይ የገንዘብ ማጠቃለያ' : 'Overall Financial Summary';
   static String get treasuryByEdir => _am ? 'ግምጃ ቤት በእድር' : 'Treasury by Edir';
   static String get totalPayment => _am ? 'ጠቅላላ ክፍያ' : 'Total Payment';
   static String get balance => _am ? 'ቀሪ ሂሳብ' : 'Balance';
-  static String get paymentDistribution => _am ? 'የክፍያ ስርጭት' : 'Payment Distribution';
+  static String get paymentDistribution =>
+      _am ? 'የክፍያ ስርጭት' : 'Payment Distribution';
   static String get membersByStatus => _am ? 'አባላት በሁኔታ' : 'Members by Status';
   static String get topBalances => _am ? 'ከፍተኛ ቀሪ ሂሳብ' : 'Top Balances';
-  static String get noMembersWithBalance => _am ? 'ቀሪ ሂሳብ ያለው አባል የለም' : 'No members with balance';
+  static String get noMembersWithBalance =>
+      _am ? 'ቀሪ ሂሳብ ያለው አባል የለም' : 'No members with balance';
   static String get membersByTsiwa => _am ? 'አባላት በየፅዋው' : 'Members by Tsiwa';
   static String get roleDistribution => _am ? 'የሚና ስርጭት' : 'Role Distribution';
   static String get leadersByRole => _am ? 'አመራሮች በሚና' : 'Leaders by Role';
@@ -390,74 +511,122 @@ class S {
   // ── Auth errors ──
   static String get userNotFound => _am ? 'ተጠቃሚ አልተገኘም' : 'User not found';
   static String get wrongPassword => _am ? 'የተሳሳተ ይለፍ ቃል' : 'Wrong password';
-  static String get emailInUse => _am ? 'ይህ ኢሜይል አስቀድሞ ተመዝግቧል' : 'Email already registered';
-  static String get weakPassword => _am ? 'ይለፍ ቃል ደካማ ነው (ቢያንስ 6 ቁምፊ)' : 'Password too weak (min 6 characters)';
-  static String get invalidEmail => _am ? 'ትክክለኛ ኢሜይል ያስገቡ' : 'Enter a valid email';
-  static String get invalidCredential => _am ? 'ስልክ ቁጥር ወይም ይለፍ ቃል ትክክል አይደለም' : 'Invalid phone number or password';
-  static String get tooManyRequests => _am ? 'በጣም ብዙ ሙከራ — ትንሽ ቆይተው ይሞክሩ' : 'Too many attempts — try again later';
-  static String get networkError => _am ? 'የኢንተርኔት ግንኙነት ያረጋግጡ' : 'Check internet connection';
-  static String unexpectedError(String e) => _am ? 'ያልተጠበቀ ስህተት: $e' : 'Unexpected error: $e';
+  static String get emailInUse =>
+      _am ? 'ይህ ኢሜይል አስቀድሞ ተመዝግቧል' : 'Email already registered';
+  static String get weakPassword => _am
+      ? 'ይለፍ ቃል ደካማ ነው (ቢያንስ 6 ቁምፊ)'
+      : 'Password too weak (min 6 characters)';
+  static String get invalidEmail =>
+      _am ? 'ትክክለኛ ኢሜይል ያስገቡ' : 'Enter a valid email';
+  static String get invalidCredential => _am
+      ? 'ስልክ ቁጥር ወይም ይለፍ ቃል ትክክል አይደለም'
+      : 'Invalid phone number or password';
+  static String get tooManyRequests => _am
+      ? 'በጣም ብዙ ሙከራ — ትንሽ ቆይተው ይሞክሩ'
+      : 'Too many attempts — try again later';
+  static String get networkError =>
+      _am ? 'የኢንተርኔት ግንኙነት ያረጋግጡ' : 'Check internet connection';
+  static String unexpectedError(String e) =>
+      _am ? 'ያልተጠበቀ ስህተት: $e' : 'Unexpected error: $e';
 
   // ── Developer Sign-In ──
   static String get signInCancelled => _am ? 'ግብዓት ተሰርዟል' : 'Sign-in cancelled';
-  static String emailNotAuthorized(String email) => _am ? 'ይህ ኢሜይል ($email) የገንቢ ፈቃድ የለውም' : 'This email ($email) is not authorized as developer';
+  static String emailNotAuthorized(String email) => _am
+      ? 'ይህ ኢሜይል ($email) የገንቢ ፈቃድ የለውም'
+      : 'This email ($email) is not authorized as developer';
 
   // ── Phone + Password Auth ──
-  static String get phoneRequired => _am ? 'ስልክ ቁጥር ያስፈልጋል' : 'Phone number is required';
+  static String get phoneRequired =>
+      _am ? 'ስልክ ቁጥር ያስፈልጋል' : 'Phone number is required';
   static String get passwordCode => _am ? 'የይለፍ ኮድ' : 'Access Code';
-  static String get codeRequired => _am ? 'የይለፍ ኮድ ያስፈልጋል' : 'Access code is required';
-  static String get phoneNotRegistered => _am ? 'ይህ ስልክ ቁጥር አልተመዘገበም' : 'This phone number is not registered';
+  static String get codeRequired =>
+      _am ? 'የይለፍ ኮድ ያስፈልጋል' : 'Access code is required';
+  static String get phoneNotRegistered =>
+      _am ? 'ይህ ስልክ ቁጥር አልተመዘገበም' : 'This phone number is not registered';
   static String get wrongCode => _am ? 'የተሳሳተ የይለፍ ኮድ' : 'Wrong access code';
-  static String get accountKicked => _am ? 'ከአካውንት ተባርረዋል — አስተዳዳሪን ያነጋግሩ' : 'You have been logged out — contact admin';
-  static String get memberLogin => _am ? 'የአባል መግቢያ' : 'Member Login';
-  static String get enterPhoneAndCode => _am ? 'ስልክ ቁጥርዎን እና የይለፍ ኮድዎን ያስገቡ' : 'Enter your phone number and access code';
+  static String get accountKicked => _am
+      ? 'ከአካውንት ተባርረዋል — አስተዳዳሪን ያነጋግሩ'
+      : 'You have been logged out — contact admin';
+  static String get memberLogin => _am ? 'የማህበርተኛ መግቢያ' : 'Member Login';
+  static String get enterPhoneAndCode => _am
+      ? 'ስልክ ቁጥርዎን እና የይለፍ ኮድዎን ያስገቡ'
+      : 'Enter your phone number and access code';
   static String get setPassword => _am ? 'ይለፍ ኮድ ቀይር' : 'Set Access Code';
   static String get newPassword => _am ? 'አዲስ የይለፍ ኮድ' : 'New Access Code';
-  static String get passwordUpdated => _am ? 'ይለፍ ኮድ ተቀይሯል' : 'Access code updated';
+  static String get passwordUpdated =>
+      _am ? 'ይለፍ ኮድ ተቀይሯል' : 'Access code updated';
   static String get kickOut => _am ? 'አስወጣ' : 'Kick Out';
-  static String get kickOutConfirm => _am ? 'ይህን አባል ከአካውንት ማስወጣት ይፈልጋሉ?' : 'Do you want to kick out this member?';
+  static String get kickOutConfirm => _am
+      ? 'ይህን ማህበርተኛ ከአካውንት ማስወጣት ይፈልጋሉ?'
+      : 'Do you want to kick out this member?';
   static String get kicked => _am ? 'ተባርሯል' : 'Kicked out';
   static String get reinstated => _am ? 'ተመልሷል' : 'Reinstated';
-  static String get addMemberAccount => _am ? 'አባል ተጠቃሚ ፍጠር' : 'Create Member Account';
-  static String get memberAccountCreated => _am ? 'የአባል አካውንት ተፈጥሯል' : 'Member account created';
-  static String get phoneAlreadyRegistered => _am ? 'ይህ ስልክ ቁጥር አስቀድሞ ተመዝግቧል' : 'This phone number is already registered';
+  static String get addMemberAccount =>
+      _am ? 'ማህበርተኛ ተጠቃሚ ፍጠር' : 'Create Member Account';
+  static String get memberAccountCreated =>
+      _am ? 'የማህበርተኛ አካውንት ተፈጥሯል' : 'Member account created';
+  static String get phoneAlreadyRegistered => _am
+      ? 'ይህ ስልክ ቁጥር አስቀድሞ ተመዝግቧል'
+      : 'This phone number is already registered';
   static String get areaLabel => _am ? 'አካባቢ' : 'Area';
   static String get deleteUser => _am ? 'ተጠቃሚ ሰርዝ' : 'Delete User';
-  static String get deleteUserConfirm => _am ? 'ይህን ተጠቃሚ ለመሰረዝ እርግጠኛ ነዎት?' : 'Are you sure you want to delete this user?';
+  static String get deleteUserConfirm => _am
+      ? 'ይህን ተጠቃሚ ለመሰረዝ እርግጠኛ ነዎት?'
+      : 'Are you sure you want to delete this user?';
   static String get userDeleted => _am ? 'ተጠቃሚ ተሰርዟል' : 'User deleted';
   static String get editPhone => _am ? 'ስልክ ቁጥር ቀይር' : 'Edit Phone Number';
-  static String get phoneUpdated => _am ? 'ስልክ ቁጥር ተቀይሯል' : 'Phone number updated';
+  static String get phoneUpdated =>
+      _am ? 'ስልክ ቁጥር ተቀይሯል' : 'Phone number updated';
   static String get allUsers => _am ? 'ሁሉም ተጠቃሚዎች' : 'All Users';
 
   // ── Global Members ──
+  static String get optionalField => _am ? '(አይጋደልም)' : '(Optional)';
   static String get globalMembers => _am ? 'አባላት' : 'Members';
-  static String get manageGlobalMembers => _am ? 'አባላትን ያስተዳድሩ' : 'Manage Members';
-  static String get noGlobalMembersYet => _am ? 'እስካሁን አባል አልተመዘገበም።' : 'No members registered yet.';
-  static String get addGlobalMemberHint => _am ? 'አዲስ አባል ለመጨመር ከታች ያለውን ቁልፍ ይጫኑ' : 'Tap the button below to add a new member';
+  static String get manageGlobalMembers =>
+      _am ? 'አባላትን ያስተዳድሩ' : 'Manage Members';
+  static String get noGlobalMembersYet =>
+      _am ? 'እስካሁን አባል አልተመዘገበም።' : 'No members registered yet.';
+  static String get addGlobalMemberHint => _am
+      ? 'አዲስ አባል ለመጨመር ከታች ያለውን ቁልፍ ይጫኑ'
+      : 'Tap the button below to add a new member';
   static String get newGlobalMember => _am ? 'አዲስ አባል' : 'New Member';
   static String get editGlobalMember => _am ? 'አባል አስተካክል' : 'Edit Member';
   static String get deleteGlobalMember => _am ? 'አባል ሰርዝ' : 'Delete Member';
-  static String get deleteGlobalMemberConfirm => _am ? 'ይህን አባል ለመሰረዝ እርግጠኛ ነዎት?' : 'Are you sure you want to delete this member?';
+  static String get deleteGlobalMemberConfirm => _am
+      ? 'ይህን አባል ለመሰረዝ እርግጠኛ ነዎት?'
+      : 'Are you sure you want to delete this member?';
   static String get globalMemberDeleted => _am ? 'አባል ተሰርዟል' : 'Member deleted';
   static String get globalMemberSaved => _am ? 'አባል ተቀምጧል' : 'Member saved';
   static String get assignToTsiwa => _am ? 'ወደ ፅዋ ማህበር መደብ' : 'Assign to Tsiwa';
   static String get assignToEdir => _am ? 'ወደ እድር መደብ' : 'Assign to Edir';
-  static String get tsiwaAssignments => _am ? 'የፅዋ ማህበር ምደባ' : 'Tsiwa Assignments';
+  static String get tsiwaAssignments =>
+      _am ? 'የፅዋ ማህበር ምደባ' : 'Tsiwa Assignments';
   static String get edirAssignments => _am ? 'የእድር ምደባ' : 'Edir Assignments';
-  static String get selectTsiwas => _am ? 'ፅዋ ማህበሮችን ይምረጡ' : 'Select Tsiwa Groups';
+  static String get selectTsiwas =>
+      _am ? 'ፅዋ ማህበሮችን ይምረጡ' : 'Select Tsiwa Groups';
   static String get selectEdirs => _am ? 'እድሮችን ይምረጡ' : 'Select Edirs';
   static String get tsiwaRole => _am ? 'የፅዋ ሚና' : 'Tsiwa Role';
   static String get roleMuse => _am ? 'ሙሴ' : 'Muse';
   static String get roleAssistantMuse => _am ? 'ረዳት ሙሴ' : 'Assistant Muse';
-  static String get roleMemberTsiwa => _am ? 'አባል' : 'Member';
+  static String get roleMemberTsiwa => _am ? 'ማህበርተኛ' : 'Member';
   static String get roleObserver => _am ? 'ታዛቢ' : 'Observer';
   static String get isEdirAmerar => _am ? 'የእድር አመራር' : 'Edir Leader';
-  static String get edirAmerarDesc => _am ? 'ክፍያ ማስመዝገብ ይችላል' : 'Can record payments';
-  static String get csvImportMembers => _am ? 'CSV አባላት አስገባ' : 'CSV Import Members';
-  static String get csvImportMembersDesc => _am ? 'CSV ፋይል ከመረጃ ጋር አባላትን አስገባ' : 'Import members from CSV file';
+  static String get edirAmerarDesc =>
+      _am ? 'ክፍያ ማስመዝገብ ይችላል' : 'Can record payments';
+  static String get csvImportMembers =>
+      _am ? 'CSV አባላት አስገባ' : 'CSV Import Members';
+  static String get csvImportMembersDesc =>
+      _am ? 'CSV ፋይል ከመረጃ ጋር አባላትን አስገባ' : 'Import members from CSV file';
+  static String get importMembers =>
+      _am ? 'ማህበርተኞች አስገባ' : 'Import Members';
+  static String get importMembersDesc => _am
+      ? 'CSV ወይም XLSX ፋይል ከመረጃ ጋር ማህበርተኞችን አስገባ'
+      : 'Import members from CSV or XLSX file';
   static String get importPreview => _am ? 'ቅድመ ዕይታ' : 'Preview';
-  static String importingMembers(int n) => _am ? '$n አባላት በማስገባት ላይ...' : 'Importing $n members...';
-  static String membersImported(int n) => _am ? '$n አባላት ተገብተዋል' : '$n members imported';
+  static String importingMembers(int n) =>
+      _am ? '$n ማህበርተኞች በማስገባት ላይ...' : 'Importing $n members...';
+  static String membersImported(int n) =>
+      _am ? '$n ማህበርተኞች ተገብተዋል' : '$n members imported';
   static String get accessCode => _am ? 'የመግቢያ ኮድ' : 'Access Code';
 
   // ── Member Home ──
@@ -468,14 +637,250 @@ class S {
   static String get teregnaCalendar => _am ? 'የተረኛ መርሃ ግብር' : 'Turn Schedule';
   static String get thisMonth => _am ? 'በዚህ ወር' : 'This Month';
   static String get nextMonths => _am ? 'ቀጣይ ወራት' : 'Next Months';
-  static String get monthlyPayments => _am ? 'ወርሃዊ መዋጮ' : 'Monthly Contributions';
+  static String get monthlyPayments =>
+      _am ? 'ወርሃዊ መዋጮ' : 'Monthly Contributions';
   static String get paid => _am ? 'ከፍሏል' : 'Paid';
   static String get unpaid => _am ? 'አልከፈለም' : 'Unpaid';
   static String get paymentStatus => _am ? 'የክፍያ ሁኔታ' : 'Payment Status';
-  static String get noAssignments => _am ? 'ወደ ምንም ፅዋ ወይም እድር አልተመደቡም' : 'Not assigned to any Tsiwa or Edir';
-  static String get contactAdminForAssignment => _am ? 'አስተዳዳሪን ያነጋግሩ ለምደባ' : 'Contact admin for assignment';
+  static String get noAssignments =>
+      _am ? 'ወደ ምንም ፅዋ ወይም እድር አልተመደቡም' : 'Not assigned to any Tsiwa or Edir';
+  static String get contactAdminForAssignment =>
+      _am ? 'አስተዳዳሪን ያነጋግሩ ለምደባ' : 'Contact admin for assignment';
   static String get welcome => _am ? 'እንኳን ደህና መጡ' : 'Welcome';
   static String get makeAdmin => _am ? 'አስተዳዳሪ አድርግ' : 'Make Admin';
   static String paidBirr(String v) => _am ? '$v ብር ከፍሏል' : '$v Birr paid';
   static String owedBirr(String v) => _am ? '$v ብር ቀሪ' : '$v Birr owed';
+
+  // ── Monthly Order ──
+  static String get monthlyOrder => _am ? 'የወር ተራ' : 'Monthly Order';
+  static String get monthlyOrderTable => _am ? 'የወር ተራ ሰንጠረዥ' : 'Monthly Order Table';
+  static String get assignOrder => _am ? 'ተራ ስጥ' : 'Assign Order';
+  static String get selectMember => _am ? 'ማህበርተኛ ይምረጡ' : 'Select Member';
+  static String get unassigned => _am ? 'አልተመደበም' : 'Unassigned';
+  static String get orderSaved => _am ? 'ተራ ተቀምጧል' : 'Order saved';
+  static String get orderSaveFailed => _am ? 'ተራ ማስቀመጥ አልተቻለም' : 'Failed to save order';
+  static String get yourNextOrder => _am ? 'የእርስዎ ቀጣይ ተራ' : 'Your Next Order';
+  static String get currentOrder => _am ? 'የአሁኑ ወር ተራ' : 'Current Month Order';
+  static String get upcomingOrders => _am ? 'ቀጣይ ተራዎች' : 'Upcoming Orders';
+  static String get allOrders => _am ? 'ሁሉም ተራዎች' : 'All Orders';
+  static String daysRemaining(int d) => _am ? '$d ቀናት ቀርተዋል' : '$d days remaining';
+  static String monthsRemaining(int m, int d) => _am ? '$m ወር ከ$d ቀናት' : '$m months $d days';
+
+  // ── Bulk add members ──
+  static String get addMembersFromGlobal =>
+      _am ? 'ማህበርተኞች ጨምር' : 'Add Members';
+  static String get selectMembersToAdd =>
+      _am ? 'ለዚህ ፅዋ የሚጨመሩ ማህበርተኞችን ይምረጡ' : 'Select members to add to this Tsiwa';
+  static String get noUnassignedMembers =>
+      _am ? 'ሁሉም አባላት ቀድሞ ተመድበዋል' : 'All members are already assigned';
+  static String membersAdded(int n) =>
+      _am ? '$n ማህበርተኞች ተጨምረዋል' : '$n members added';
+  static String get addingMembers =>
+      _am ? 'ማህበርተኞች በመጨመር ላይ...' : 'Adding members...';
+  static String get failedToAddMembers =>
+      _am ? 'ማህበርተኞች መጨመር አልተቻለም' : 'Failed to add members';
+  static String get searchMembers =>
+      _am ? 'ማህበርተኛ ፈልግ...' : 'Search members...';
+  static String selected(int n) =>
+      _am ? '$n ተመርጠዋል' : '$n selected';
+
+  // ── Year switcher ──
+  static String yearLabel(int y) => _am ? '$y ዓ.ም.' : 'Year $y';
+  static String get selectTsiwaToView => _am ? 'ፅዋ ማህበር ይምረጡ' : 'Select a Tsiwa';
+  static String get backToList => _am ? 'ወደ ዝርዝር ተመለስ' : 'Back to list';
+  static String get tapToViewDetails =>
+      _am ? 'ለዝርዝር ይጫኑ' : 'Tap to view details';
+  static String get noProfileImage =>
+      _am ? 'ፎቶ አልተጫነም' : 'No image';
+
+  // ── Order swap ──
+  static String get swapOrder => _am ? 'ተራ ቀያይር' : 'Swap Order';
+  static String get swapWith => _am ? 'ከየትኛው ወር ጋር ይቀያይር?' : 'Swap with which month?';
+  static String get orderSwapped => _am ? 'ተራ ተቀይሯል' : 'Order swapped';
+  static String get swapFailed => _am ? 'ተራ መቀያየር አልተቻለም' : 'Swap failed';
+
+  // ── Tsiwa reorder ──
+  static String get reorderTsiwas => _am ? 'ፅዋ ማህበራትን ቅደም ተከተል ቀይር' : 'Reorder Tsiwas';
+  static String get orderUpdated => _am ? 'ቅደም ተከተል ተቀይሯል' : 'Order updated';
+
+  // ── Edir sync ──
+  static String get syncingEdirMembers =>
+      _am ? 'የእድር አባላት በማመሳሰል ላይ...' : 'Syncing edir members...';
+  static String get edirMembersSynced =>
+      _am ? 'የእድር አባላት ተመሳስለዋል' : 'Edir members synced';
+
+  // ── Notification types ──
+  static String get notifTurnReminder =>
+      _am ? 'የተራ ማስታወሻ' : 'Turn Reminder';
+  static String get notifTurnAlert =>
+      _am ? 'የተራ ማሳወቂያ' : 'Turn Alert';
+
+  // ── Announcement targeting ──
+  static String get postTo => _am ? 'ለ' : 'Post to';
+  static String get allMembers => _am ? 'ለሁሉም አባላት' : 'All members';
+  static String get specificTsiwa => _am ? 'ለተወሰነ ፅዋ ማህበር' : 'Specific Tsiwa';
+  static String get announcementPosted =>
+      _am ? 'ማሳሰቢያ / መልእክት ተልኳል' : 'Announcement posted';
+
+  // ── Edir visibility ──
+  static String get hideEdir => _am ? 'እድር ደብቅ' : 'Hide Edir';
+  static String get showEdir => _am ? 'እድር አሳይ' : 'Show Edir';
+  static String get edirHidden => _am ? 'እድር ተደብቋል' : 'Edir hidden';
+  static String get edirVisible => _am ? 'እድር ይታያል' : 'Edir visible';
+  static String get hidden => _am ? 'የተደበቀ' : 'Hidden';
+
+  // ── Turn reminders ──
+  static String get sendReminder => _am ? 'ማስታወሻ ላክ' : 'Send Reminder';
+  static String get reminderSent => _am ? 'ማስታወሻ ተልኳል' : 'Reminder sent';
+  static String get sendAlert => _am ? 'ማሳወቂያ ላክ' : 'Send Alert';
+  static String get alertSent => _am ? 'ማሳወቂያ ተልኳል' : 'Alert sent';
+  static String get resendNotification =>
+      _am ? 'ማሳወቂያ ደግሞ ላክ' : 'Resend Notification';
+  static String get notificationResent =>
+      _am ? 'ማሳወቂያ ደግሞ ተልኳል' : 'Notification resent';
+  static String turnReminderBody(String month, int days) =>
+      _am
+          ? 'የ$month ወር ተራዎ $days ቀናት ቀርተዋል'
+          : 'Your turn in $month is $days days away';
+  static String turnAlertBody(String month) =>
+      _am ? 'የ$month ወር ተራዎ ደርሷል!' : 'Your turn for $month has arrived!';
+  static String turnReminderAll(String month, String name) =>
+      _am
+          ? 'የ$month ወር ተራ $name ነው'
+          : "$name's turn for $month";
+
+  // ── Chat ──
+  static String get chatGroups => _am ? 'የቡድን ውይይት' : 'Group Chat';
+  static String get chatGroupsSub =>
+      _am ? 'ከአባላት ጋር ይወያዩ' : 'Chat with members';
+  static String get globalChat => _am ? 'ዓለም አቀፍ ቡድን' : 'Global Group';
+  static String get amerarsChat => _am ? 'የአመራሮች ቡድን' : 'Amerars Only';
+  static String get tsiwaChat => _am ? 'የጽዋ ቡድን' : 'Tsiwa Group';
+  static String get typeMessage => _am ? 'መልእክት ይጻፉ...' : 'Type a message...';
+  static String get noChatMessages =>
+      _am ? 'እስካሁን መልእክት የለም' : 'No messages yet';
+  static String get noChatRooms =>
+      _am ? 'ቡድን የለም' : 'No chat rooms available';
+  static String get deleteMessage => _am ? 'መልእክት ሰርዝ' : 'Delete Message';
+  static String get deleteMessageConfirm =>
+      _am ? 'ይህንን መልእክት መሰረዝ ይፈልጋሉ?' : 'Delete this message?';
+  static String get disabled => _am ? 'ተዘግቷል' : 'Disabled';
+
+  // ── Chat enhancements ──
+  static String get customGroup => _am ? 'ብጁ ቡድን' : 'Custom Group';
+  static String get createGroup => _am ? 'አዲስ ቡድን ፍጠር' : 'Create Group';
+  static String get groupName => _am ? 'የቡድን ስም' : 'Group Name';
+  static String get groupNameRequired =>
+      _am ? 'የቡድን ስም ያስፈልጋል' : 'Group name is required';
+  static String get selectedMembers => _am ? 'የተመረጡ አባላት' : 'Selected members';
+  static String get chatMembers => _am ? 'የቡድን አባላት' : 'Chat Members';
+  static String get noMembers => _am ? 'አባላት የሉም' : 'No members';
+  static String get rename => _am ? 'ስም ቀይር' : 'Rename';
+  static String get disableGroup => _am ? 'ቡድኑን ዝጋ' : 'Disable Group';
+  static String get enableGroup => _am ? 'ቡድኑን ክፈት' : 'Enable Group';
+  static String get muteGroup => _am ? 'ቡድኑን ዝም አሰኝ' : 'Mute Group';
+  static String get unmuteGroup => _am ? 'ድምጽ ክፈት' : 'Unmute Group';
+  static String get deleteGroupConfirm =>
+      _am ? 'ይህንን ቡድን መሰረዝ ይፈልጋሉ?' : 'Delete this group?';
+  static String get mute24h => _am ? 'ለ24 ሰዓት' : 'For 24 hours';
+  static String get mute1week => _am ? 'ለ1 ሳምንት' : 'For 1 week';
+  static String get muteUntilEnabled =>
+      _am ? 'እስከሚከፈት ድረስ' : 'Until manually re-enabled';
+  static String get groupMuted =>
+      _am ? 'ይህ ቡድን ጸጥ ተደርጓል' : 'This group is muted';
+  static String get youAreRestricted =>
+      _am ? 'መልእክት መላክ ተከልክለዋል' : 'You are restricted from sending';
+  static String get editMessage => _am ? 'መልእክት አስተካክል' : 'Edit Message';
+  static String get editingMessage => _am ? 'በማስተካከል ላይ...' : 'Editing...';
+  static String get edited => _am ? 'ተስተካክሏል' : 'edited';
+  static String get scheduleMessage =>
+      _am ? 'መልእክት ቀጠሮ' : 'Schedule Message';
+  static String get schedule => _am ? 'ቀጠሮ' : 'Schedule';
+  static String get restricted => _am ? 'ተከልክሏል' : 'Restricted';
+  static String get restrictSending =>
+      _am ? 'መላክ ከልክል' : 'Restrict Sending';
+  static String get allowSending => _am ? 'መላክ ፍቀድ' : 'Allow Sending';
+  static String get removeMember => _am ? 'አባል አስወግድ' : 'Remove Member';
+
+  // ── Scheduled announcements ──
+  static String get scheduleAnnouncement =>
+      _am ? 'ማሳሰቢያ ቀጠሮ' : 'Schedule Announcement';
+  static String get noSchedule =>
+      _am ? 'ቀጠሮ የለም (አሁን ይለጠፍ)' : 'No schedule (post now)';
+
+  // ── Premium themes ──
+  static String get chooseTheme => _am ? 'ገጽታ ይምረጡ' : 'Choose Theme';
+
+  // ── Ring bell ──
+  static String get ringBell => _am ? 'ደውል' : 'Ring Bell';
+  static String get ringBellConfirm =>
+      _am ? 'ለሁሉም አባላት ማሳሰቢያ ይላክ?' : 'Send alert to all members?';
+  static String get ringBellSent =>
+      _am ? 'ማሳሰቢያ ተላከ!' : 'Alert sent to all members!';
+
+  // ── Code change ──
+  static String get changeCode => _am ? 'የመግቢያ ኮድ ቀይር' : 'Change Login Code';
+  static String get currentCode => _am ? 'አሁን ያለው ኮድ' : 'Current Code';
+  static String get newCode => _am ? 'አዲስ ኮድ' : 'New Code';
+  static String get confirmNewCode => _am ? 'አዲስ ኮድ ድገም' : 'Confirm New Code';
+  static String get codeMismatch =>
+      _am ? 'አዲሱ ኮድ አይመሳሰልም' : 'New codes do not match';
+  static String get wrongCurrentCode =>
+      _am ? 'የአሁኑ ኮድ ስህተት ነው' : 'Current code is incorrect';
+  static String get codeChanged =>
+      _am ? 'ኮድ በተሳካ ሁኔታ ተቀይሯል' : 'Code changed successfully';
+
+  // ── About screen ──
+  static String get about => _am ? 'ስለ መተግበሪያው' : 'About';
+  static String get version => _am ? 'ስሪት' : 'Version';
+  static String get developer => _am ? 'ገንቢ' : 'Developer';
+  static String get contact => _am ? 'ለማግኘት' : 'Contact';
+
+  // ── Onboarding ──
+  static String get onboardTitle1 =>
+      _am ? 'እንኳን ወደ ጽዋ ማህበር በደህና መጡ' : 'Welcome to Tsiwa Mahber';
+  static String get onboardBody1 =>
+      _am
+          ? 'የጽዋ ማህበር አስተዳደር መተግበሪያ — ተራ ቁጥር፣ ማሳሰቢያ፣ ውይይት እና ሌሎችንም ያስተዳድሩ'
+          : 'Manage your Tsiwa Mahber — rotation, announcements, chat and more';
+  static String get onboardTitle2 =>
+      _am ? 'ማሳሰቢያዎች እና ውይይት' : 'Announcements & Chat';
+  static String get onboardBody2 =>
+      _am
+          ? 'ማሳሰቢያዎችን ይቀበሉ፣ ከአባላት ጋር ይወያዩ፣ የተረኛ ቁጥር ያረጋግጡ'
+          : 'Receive announcements, chat with members, check your turn';
+  static String get onboardTitle3 =>
+      _am ? 'ተራ ቁጥር እና ቀን መቁጠሪያ' : 'Turns & Calendar';
+  static String get onboardBody3 =>
+      _am
+          ? 'በኢትዮጵያ ቀን መቁጠሪያ ተረኞችን ይከታተሉ፣ ከቀጣዩ ጽዋ ቀን ቀሪ ቀናት ይመልከቱ'
+          : 'Track turns on Ethiopian calendar, see days until next Tsiwa';
+  static String get getStarted => _am ? 'ጀምር' : 'Get Started';
+  static String get skip => _am ? 'ዝለል' : 'Skip';
+
+  // ── Password change enable/disable ──
+  static String get passwordChangeSettings =>
+      _am ? 'የይለፍ ቃል ቅንብሮች' : 'Password Change Settings';
+  static String get enablePasswordChange =>
+      _am ? 'የይለፍ ቃል ለውጥ ይፍቀዱ' : 'Enable Password Change';
+  static String get enablePasswordChangeGlobal =>
+      _am ? 'ለሁሉም አባላት' : 'For all members';
+  static String get disablePasswordChange =>
+      _am ? 'የይለፍ ቃል ለውጥ ይከልክሉ' : 'Disable Password Change';
+  static String get passwordChangeEnabled =>
+      _am ? 'የይለፍ ቃል ለውጥ ተፈቅዷል' : 'Password change enabled';
+  static String get passwordChangeDisabled =>
+      _am ? 'የይለፍ ቃል ለውጥ ተከልክሏል' : 'Password change disabled';
+
+  // ── Chat notifications ──
+  static String get chatNotifications =>
+      _am ? 'የውይይት ማሳሰቢያ' : 'Chat Notifications';
+  static String get enableNotifications =>
+      _am ? 'ማሳሰቢያ ያብሩ' : 'Enable Notifications';
+  static String get disableNotifications =>
+      _am ? 'ማሳሰቢያ ያጥፉ' : 'Disable Notifications';
+  static String get notificationsEnabled =>
+      _am ? 'ማሳሰቢያ ተብርቷል' : 'Notifications enabled';
+  static String get notificationsDisabled =>
+      _am ? 'ማሳሰቢያ ጠፍቷል' : 'Notifications disabled';
 }
