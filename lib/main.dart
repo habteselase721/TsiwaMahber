@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:tsiwa_mahber/app.dart';
 import 'package:tsiwa_mahber/firebase_options.dart';
+import 'package:tsiwa_mahber/core/services/app_lock_service.dart';
 import 'package:tsiwa_mahber/core/services/local_notification_service.dart';
 
 void main() async {
@@ -11,6 +12,9 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  // Initialize app lock service (loads persisted settings).
+  await AppLockService.instance.init();
 
   // Make the system navigation bar transparent so it doesn't overlap content
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);

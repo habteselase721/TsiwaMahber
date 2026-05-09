@@ -883,4 +883,60 @@ class S {
       _am ? 'ማሳሰቢያ ተብርቷል' : 'Notifications enabled';
   static String get notificationsDisabled =>
       _am ? 'ማሳሰቢያ ጠፍቷል' : 'Notifications disabled';
+
+  // ── App Lock / Biometric ──
+  static String get appLockSettings =>
+      _am ? 'የመቆለፊያ ቅንብሮች' : 'App Lock Settings';
+  static String get biometricAuth =>
+      _am ? 'ባዮሜትሪክ ማረጋገጫ' : 'Biometric Authentication';
+  static String get biometricAuthDesc =>
+      _am
+          ? 'የጣት አሻራ ወይም የፊት ቅኝት ተጠቀም'
+          : 'Use fingerprint or face scan to unlock';
+  static String get biometricNotAvailable =>
+      _am
+          ? 'ባዮሜትሪክ በዚህ መሣሪያ ላይ አይገኝም'
+          : 'Biometric not available on this device';
+  static String get lockTimeout =>
+      _am ? 'የመቆለፊያ ጊዜ' : 'Lock Timeout';
+  static String get lockTimeoutDesc =>
+      _am
+          ? 'መተግበሪያውን ከዘጉ በኋላ ምን ያህል ጊዜ ከመቆለፉ በፊት ይጠብቅ'
+          : 'How long after closing before re-auth is required';
+  static String get lockNow =>
+      _am ? 'አሁን ቆልፍ' : 'Lock Now';
+  static String get lockNowDesc =>
+      _am ? 'መተግበሪያውን ወዲያውኑ ቆልፍ' : 'Instantly lock the app';
+  static String get appLocked =>
+      _am ? 'መተግበሪያው ተቆልፏል' : 'App Locked';
+  static String get unlockToContine =>
+      _am
+          ? 'ለመቀጠል ባዮሜትሪክ ተጠቀም'
+          : 'Use biometric authentication to continue';
+  static String get unlockWithBiometric =>
+      _am ? 'ክፈት' : 'Unlock';
+  static String get unlockReason =>
+      _am ? 'መተግበሪያውን ለመክፈት ያረጋግጡ' : 'Authenticate to unlock app';
+  static String get verifyToEnable =>
+      _am
+          ? 'ባዮሜትሪክ ለማብራት ያረጋግጡ'
+          : 'Verify identity to enable biometric lock';
+  static String get authFailed =>
+      _am ? 'ማረጋገጫ አልተሳካም' : 'Authentication failed';
+  static String get timeoutImmediately =>
+      _am ? 'ወዲያውኑ' : 'Immediately';
+  static String get timeoutOneMin =>
+      _am ? '1 ደቂቃ' : '1 minute';
+  static String get timeoutFiveMin =>
+      _am ? '5 ደቂቃ' : '5 minutes';
+  static String get timeoutThirtyMin =>
+      _am ? '30 ደቂቃ' : '30 minutes';
+  static String get timeoutOneHour =>
+      _am ? '1 ሰአት' : '1 hour';
+  static String get timeoutNever =>
+      _am ? 'በጭራሽ' : 'Never';
+  static String get security =>
+      _am ? 'ደህንነት' : 'Security';
+  static String get securitySettings =>
+      _am ? 'የደህንነት ቅንብሮች' : 'Security Settings';
 }

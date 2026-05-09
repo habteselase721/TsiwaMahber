@@ -6,7 +6,9 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:tsiwa_mahber/core/theme/app_theme.dart';
 import 'package:tsiwa_mahber/features/developer/data/developer_service.dart';
 import 'package:tsiwa_mahber/core/l10n/app_strings.dart';
+import 'package:tsiwa_mahber/core/services/app_lock_service.dart';
 import 'package:tsiwa_mahber/features/settings/presentation/about_screen.dart';
+import 'package:tsiwa_mahber/features/settings/presentation/app_lock_settings_screen.dart';
 
 class AppPopupMenu extends StatelessWidget {
   final ThemeProvider themeProvider;
@@ -70,6 +72,27 @@ class AppPopupMenu extends StatelessWidget {
               dense: true,
             ),
           ),
+        if (AppLockService.instance.biometricEnabled)
+          PopupMenuItem<String>(
+            value: 'lock_now',
+            child: ListTile(
+              leading: const Icon(Icons.lock, size: 20,
+                  color: AppTheme.primary),
+              title: Text(S.lockNow,
+                  style: const TextStyle(color: AppTheme.primary)),
+              contentPadding: EdgeInsets.zero,
+              dense: true,
+            ),
+          ),
+        PopupMenuItem<String>(
+          value: 'lock_settings',
+          child: ListTile(
+            leading: const Icon(Icons.fingerprint, size: 20),
+            title: Text(S.appLockSettings),
+            contentPadding: EdgeInsets.zero,
+            dense: true,
+          ),
+        ),
         PopupMenuItem<String>(
           value: 'about',
           child: ListTile(
@@ -118,6 +141,18 @@ class AppPopupMenu extends StatelessWidget {
         } else {
           await GoogleSignIn().signOut();
           await FirebaseAuth.instance.signOut();
+        }
+        break;
+      case 'lock_now':
+        AppLockService.instance.lockNow();
+        break;
+      case 'lock_settings':
+        if (context.mounted) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (_) => const AppLockSettingsScreen()),
+          );
         }
         break;
       case 'about':
