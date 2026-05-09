@@ -74,6 +74,21 @@ class AppLockService extends ChangeNotifier {
     _biometricEnabled = prefs.getBool(_keyBiometricEnabled) ?? false;
     _lockTimeout =
         LockTimeout.fromKey(prefs.getString(_keyLockTimeout));
+
+    // Check if the app should be locked on startup (e.g. after process kill).
+    if (_biometricEnabled && _lockTimeout != LockTimeout.never) {
+      final bgAt = prefs.getInt(_keyBackgroundedAt);
+      if (bgAt != null) {
+        if (_lockTimeout == LockTimeout.immediately) {
+          _isLocked = true;
+        } else {
+          final elapsed = DateTime.now().millisecondsSinceEpoch - bgAt;
+          if (elapsed >= _lockTimeout.seconds * 1000) {
+            _isLocked = true;
+          }
+        }
+      }
+    }
   }
 
   Future<void> setBiometricEnabled(bool value) async {
