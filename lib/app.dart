@@ -69,6 +69,15 @@ class _TsiwaAppState extends State<TsiwaApp> with WidgetsBindingObserver {
       debugShowCheckedModeBanner: false,
       theme: _themeProvider.theme,
       home: _buildHome(),
+      builder: (context, child) {
+        return Stack(
+          children: [
+            child!,
+            if (_lockService.isLocked)
+              const Positioned.fill(child: LockScreen()),
+          ],
+        );
+      },
     );
   }
 
@@ -85,11 +94,6 @@ class _TsiwaAppState extends State<TsiwaApp> with WidgetsBindingObserver {
           setState(() => _showOnboarding = false);
         },
       );
-    }
-
-    // Show lock screen overlay when app is locked.
-    if (_lockService.isLocked) {
-      return const LockScreen();
     }
 
     return AuthGate(
