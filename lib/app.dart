@@ -45,8 +45,7 @@ class _TsiwaAppState extends State<TsiwaApp> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
-    if (state == AppLifecycleState.paused ||
-        state == AppLifecycleState.inactive) {
+    if (state == AppLifecycleState.paused) {
       _lockService.onAppPaused();
     } else if (state == AppLifecycleState.resumed) {
       _lockService.onAppResumed();
