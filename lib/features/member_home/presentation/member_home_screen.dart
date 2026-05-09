@@ -9,6 +9,7 @@ import 'package:tsiwa_mahber/features/member_home/presentation/edir_member_tab.d
 import 'package:tsiwa_mahber/features/announcements/presentation/announcement_list_screen.dart';
 import 'package:tsiwa_mahber/features/chat/presentation/chat_rooms_screen.dart';
 import 'package:tsiwa_mahber/core/constants/app_constants.dart';
+import 'package:tsiwa_mahber/features/settings/presentation/app_lock_settings_screen.dart';
 
 class MemberHomeScreen extends StatefulWidget {
   final AppUser currentUser;
@@ -234,6 +235,23 @@ class _MemberHomeScreenState extends State<MemberHomeScreen> {
               },
             ),
           ],
+
+          const SizedBox(height: 8),
+          _buildQuickCard(
+            icon: Icons.fingerprint,
+            title: S.appLockSettings,
+            subtitle: S.biometricAuthDesc,
+            color: Colors.teal,
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      const AppLockSettingsScreen(),
+                ),
+              );
+            },
+          ),
 
           const SizedBox(height: 8),
           _buildQuickCard(

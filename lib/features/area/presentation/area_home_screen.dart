@@ -31,6 +31,7 @@ import 'package:tsiwa_mahber/features/global_members/presentation/global_member_
 import 'package:tsiwa_mahber/core/l10n/app_strings.dart';
 import 'package:tsiwa_mahber/core/constants/app_constants.dart';
 import 'package:tsiwa_mahber/features/chat/presentation/chat_rooms_screen.dart';
+import 'package:tsiwa_mahber/features/settings/presentation/app_lock_settings_screen.dart';
 import 'package:tsiwa_mahber/features/settings/presentation/security_settings_screen.dart';
 
 class AreaHomeScreen extends StatefulWidget {
@@ -464,6 +465,21 @@ class _AreaHomeScreenState extends State<AreaHomeScreen> {
               );
             },
           ),
+        AppInfoCard(
+          icon: Icons.fingerprint,
+          title: S.appLockSettings,
+          subtitle: S.biometricAuthDesc,
+          iconColor: Colors.teal,
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) =>
+                    const AppLockSettingsScreen(),
+              ),
+            );
+          },
+        ),
         if (role?.isDeveloper == true)
           AppInfoCard(
             icon: Icons.code,
