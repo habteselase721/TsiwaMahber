@@ -39,6 +39,9 @@ class AppLockService extends ChangeNotifier {
   bool _isLocked = false;
   bool _initialized = false;
 
+  /// In-memory backgrounded timestamp for synchronous lock decisions.
+  int? _backgroundedAtMs;
+
   bool get biometricEnabled => _biometricEnabled;
   LockTimeout get lockTimeout => _lockTimeout;
   bool get isLocked => _isLocked;
@@ -91,36 +94,59 @@ class AppLockService extends ChangeNotifier {
   }
 
   /// Call when the app goes to background.
-  Future<void> onAppPaused() async {
+  void onAppPaused() {
     if (!_biometricEnabled) return;
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt(
-        _keyBackgroundedAt, DateTime.now().millisecondsSinceEpoch);
+    _backgroundedAtMs = DateTime.now().millisecondsSinceEpoch;
+    // Persist to disk for process-restart fallback.
+    SharedPreferences.getInstance().then((prefs) {
+      prefs.setInt(_keyBackgroundedAt, _backgroundedAtMs!);
+    });
   }
 
-  /// Call when the app returns to foreground. Returns true if lock is needed.
-  Future<bool> onAppResumed() async {
-    if (!_biometricEnabled) return false;
-    if (_lockTimeout == LockTimeout.never) return false;
+  /// Call when the app returns to foreground.
+  /// Uses in-memory timestamp for synchronous lock decision (no async gap).
+  void onAppResumed() {
+    if (!_biometricEnabled) return;
+    if (_lockTimeout == LockTimeout.never) return;
 
-    final prefs = await SharedPreferences.getInstance();
-    final bgAt = prefs.getInt(_keyBackgroundedAt);
-    if (bgAt == null) return false;
+    final bgAt = _backgroundedAtMs;
+    if (bgAt == null) {
+      // Process was restarted — fall back to async prefs read.
+      _resumeFromPrefs();
+      return;
+    }
 
     if (_lockTimeout == LockTimeout.immediately) {
       _isLocked = true;
       notifyListeners();
-      return true;
+      return;
     }
 
-    final elapsed =
-        DateTime.now().millisecondsSinceEpoch - bgAt;
+    final elapsed = DateTime.now().millisecondsSinceEpoch - bgAt;
     if (elapsed >= _lockTimeout.seconds * 1000) {
       _isLocked = true;
       notifyListeners();
-      return true;
     }
-    return false;
+  }
+
+  /// Fallback: read backgrounded timestamp from SharedPreferences when
+  /// the in-memory value is unavailable (e.g. after process restart).
+  Future<void> _resumeFromPrefs() async {
+    final prefs = await SharedPreferences.getInstance();
+    final bgAt = prefs.getInt(_keyBackgroundedAt);
+    if (bgAt == null) return;
+
+    if (_lockTimeout == LockTimeout.immediately) {
+      _isLocked = true;
+      notifyListeners();
+      return;
+    }
+
+    final elapsed = DateTime.now().millisecondsSinceEpoch - bgAt;
+    if (elapsed >= _lockTimeout.seconds * 1000) {
+      _isLocked = true;
+      notifyListeners();
+    }
   }
 
   /// Instantly lock the app (one-click lock button).

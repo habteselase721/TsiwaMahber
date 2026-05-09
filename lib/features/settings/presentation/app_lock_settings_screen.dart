@@ -159,26 +159,40 @@ class _AppLockSettingsScreenState extends State<AppLockSettingsScreen> {
 
   Widget _buildTimeoutRadios() {
     final enabled = _lockService.biometricEnabled;
-    void onChanged(LockTimeout? val) {
-      if (val != null) _lockService.setLockTimeout(val);
+    if (enabled) {
+      void onChanged(LockTimeout? val) {
+        if (val != null) _lockService.setLockTimeout(val);
+      }
+      return RadioGroup<LockTimeout>(
+        groupValue: _lockService.lockTimeout,
+        onChanged: onChanged,
+        child: Column(
+          children: LockTimeout.values.map((t) {
+            return RadioListTile<LockTimeout>(
+              value: t,
+              title: Text(_timeoutLabel(t)),
+              activeColor: AppTheme.primary,
+            );
+          }).toList(),
+        ),
+      );
     }
-    return RadioGroup<LockTimeout>(
-      groupValue: _lockService.lockTimeout,
-      onChanged: enabled ? onChanged : (_) {},
-      child: Column(
-        children: LockTimeout.values.map((t) {
-          return RadioListTile<LockTimeout>(
-            value: t,
-            title: Text(
-              _timeoutLabel(t),
-              style: TextStyle(
-                color: enabled ? null : AppTheme.textMuted,
-              ),
-            ),
-            activeColor: AppTheme.primary,
-          );
-        }).toList(),
-      ),
+    // When disabled, render without RadioGroup so radios appear disabled.
+    return Column(
+      children: LockTimeout.values.map((t) {
+        return RadioListTile<LockTimeout>(
+          value: t,
+          // ignore: deprecated_member_use
+          groupValue: _lockService.lockTimeout,
+          // ignore: deprecated_member_use
+          onChanged: null,
+          title: Text(
+            _timeoutLabel(t),
+            style: const TextStyle(color: AppTheme.textMuted),
+          ),
+          activeColor: AppTheme.primary,
+        );
+      }).toList(),
     );
   }
 
